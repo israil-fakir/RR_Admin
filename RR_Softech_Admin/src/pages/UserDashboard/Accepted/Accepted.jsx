@@ -60,7 +60,7 @@ export default function Accepted() {
         <Model 
         selectedOrder={selectedOrder} 
         setSelectedOrder={setSelectedOrder} 
-        visibleTabs={["Chatting","Transaction","Payment","Milestone","WorkUpdate","Reviews"]}
+        visibleTabs={["Chatting","Transaction","Milestone","WorkUpdate","Reviews"]}
         />
       )}
     </div>

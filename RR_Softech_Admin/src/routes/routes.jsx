@@ -23,10 +23,11 @@ import Pending from "./../pages/UserDashboard/Pending/Pending";
 import Rejected from "./../pages/UserDashboard/Rejected/Rejected";
 import ApprovalPending from "../pages/admin/ApprovalPending/ApprovalPending";
 import AwaitingPayment from "../pages/UserDashboard/AwaitingPayment/AwaitingPayment";
+import AllServices from "../pages/UserDashboard/AlllServices/AllServices";
 
 const router = createBrowserRouter([
   {
-    element: <PublicRoute to="/services" />,
+    element: <PublicRoute to="/user/orders" />,
     children: [{ path: "user/login", element: <AuthModal role="CUSTOMER" /> }],
   },
 
@@ -37,12 +38,13 @@ const router = createBrowserRouter([
         path: "user",
         element: <DashboardLayout />,
         children: [
-          { path: "services", element: <OrdersList /> },
+          { path: "orders", element: <OrdersList /> },
           { path: "pending", element: <Pending /> },
           { path: "awaiting-payment", element: <AwaitingPayment /> },
           { path: "accepted", element: <Accepted /> },
           { path: "rejected", element: <Rejected /> },
           { path: "finished", element: <Finished /> },
+          { path: "services", element: <AllServices /> },
           { path: "free-consultancy", element: <FreeConsultancy /> },
           { path: "change-password", element: <ChangePassword /> },
         ],

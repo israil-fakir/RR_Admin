@@ -18,13 +18,14 @@ export default function Model({
 }) {
   const [ordersData, setOrdersData] = useState(null); 
   const [loading, setLoading] = useState(true);
+
   
   const effectiveTabs =
     Array.isArray(visibleTabs) && visibleTabs.length
       ? tabs.filter((t) => visibleTabs.includes(t.value))
       : tabs;
 
-  const [activeTab, setActiveTab] = useState(
+          const [activeTab, setActiveTab] = useState(
     effectiveTabs[0]?.value ?? "Chatting"
   );
 
@@ -62,7 +63,6 @@ export default function Model({
     >
       {selectedOrder && (
         <div>
-          {/* ---------- TABS ---------- */}
           <div className="flex flex-col sm:flex-row bg-blue-100 rounded-xl p-1.5 space-y-1 sm:space-y-0 sm:space-x-1">
             {effectiveTabs.map((tab) => (
               <button
@@ -75,14 +75,12 @@ export default function Model({
             ))}
           </div>
 
-          {/* ---------- LOADING STATE ---------- */}
           {loading && (
             <div className="mt-6 text-gray-500 text-sm">
               Loading order details...
             </div>
           )}
 
-          {/* ---------- DATA LOADED ---------- */}
           {!loading && ordersData && (
             <div className="mt-6">
               {activeTab === "Chatting" && (

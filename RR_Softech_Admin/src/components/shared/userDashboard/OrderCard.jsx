@@ -30,10 +30,6 @@ export default function OrderCard({
               <p className="text-lg font-bold text-gray-900 mb-2">
                 ${plan_price || 0}
               </p>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                <CalendarDays size={14} strokeWidth={2} />
-                <span>{formattedDate || "00 00 0000"}</span>
-              </div>
               <div>
               </div>
             </div>
@@ -44,6 +40,10 @@ export default function OrderCard({
             {status || "No Status"}
           </span>
         </div>
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 ml-14">
+                <CalendarDays size={14} strokeWidth={2} />
+                <span>{formattedDate || "00 00 0000"}</span>
+              </div>
       </div>
       <div className="p-5 ">
         <button

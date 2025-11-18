@@ -59,7 +59,7 @@ export default function AwaitingPayment() {
         <Model 
         selectedOrder={selectedOrder} 
         setSelectedOrder={setSelectedOrder}
-        visibleTabs={["Chatting", "Transaction", "Reviews","Feedback"]}
+        visibleTabs={["Chatting", "Transaction",'Milestone','Payment', "Reviews"]}
          />
       )}
     </div>

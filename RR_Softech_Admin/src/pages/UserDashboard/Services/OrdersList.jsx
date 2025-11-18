@@ -1,42 +1,25 @@
 import { useEffect, useState } from "react";
 import OrderCard from "../../../components/shared/userDashboard/OrderCard";
-import Model from "./Model";
-import { fetchOrders } from "../../../api/UserDashboard/orders";
-import { List, Grid3X3 } from "lucide-react";
 import Pagination from "../../../components/shared/userDashboard/Pagination";
+import { fetchOrders } from "../../../api/UserDashboard/orders";
+import { TAB_CONFIG } from "../../../utils/UserDashboard/services/tabconfig";
+import { List, Grid3X3 } from "lucide-react";
+import Model from "./Model";
 
 export default function OrdersList() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  console.log(orders);
-  
-
-  const [viewMode, setViewMode] = useState("grid"); 
-
-  
+  const [viewMode, setViewMode] = useState("grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 10; 
 
-  const TAB_CONFIG = {
-    PENDING: ["Chatting", "Transaction","Milestone", "Payment", "Reviews"],
-    AWAITING_PAYMENT: ["Chatting", "Transaction", "Payment", "Reviews"],
-    ACTIVE: [
-      "Chatting",
-      "Transaction",
-      "Payment",
-      "Milestone",
-      "WorkUpdate",
-      "Reviews",
-    ],
-    PAID: ["Chatting", "Transaction", "Reviews", "Feedback"],
-    CANCELLED: ["Chatting", "Reviews"],
-  };
-
+  const ITEMS_PER_PAGE = 10;
   const visibleTabs = selectedOrder
     ? TAB_CONFIG[selectedOrder.status] || []
     : [];
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = orders.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
@@ -60,17 +43,14 @@ export default function OrdersList() {
     return <p className="text-gray-600">Loading your orders...</p>;
   }
 
-  // Pagination Logic
-  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
-  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = orders.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-
   return (
     <div className="relative bg-[#F5F5F5]">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-[#2563EB] text-2xl font-bold mb-1">My Orders</h1>
-          <p className="text-gray-600">Track and manage all your RR Softech orders in one place</p>
+          <p className="text-gray-600">
+            Track and manage all your RR Softech orders in one place
+          </p>
         </div>
 
         {/* View Toggle */}
@@ -110,7 +90,10 @@ export default function OrdersList() {
         {currentItems.length > 0 ? (
           currentItems.map((order) => (
             <div key={order.id} className={viewMode === "list" ? "w-full" : ""}>
-              <OrderCard order={order} onViewDetails={() => handleViewDetails(order)} />
+              <OrderCard
+                order={order}
+                onViewDetails={() => handleViewDetails(order)}
+              />
             </div>
           ))
         ) : (
