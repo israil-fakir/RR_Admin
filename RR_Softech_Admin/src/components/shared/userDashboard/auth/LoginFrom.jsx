@@ -23,11 +23,11 @@ export default function LoginFrom({ setMode,role }) {
       });
       toast.success("Logged in successfully");
       if(role === "CUSTOMER"){
-        navigate("/user/services");
+        navigate("/customer");
       }else if(role === "OWNER"){
-        navigate("/admindashboard");
+        navigate("/admin");
       }else if(role === "EMPLOYEE"){
-        navigate("/employeedashboard");
+        navigate("/employee");
       }
     } catch (err) {
       handleApiError(err, "Login failed. Please try again.");

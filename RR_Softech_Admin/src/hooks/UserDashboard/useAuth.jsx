@@ -37,6 +37,7 @@ export function getStoredTokens() {
 
 export default function useAuth() {
   const [auth, setAuth] = useState(getStoredTokens());
+  
 
   const setAuthState = useCallback((tokens) => {
     saveTokens(tokens);

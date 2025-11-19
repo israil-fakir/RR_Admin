@@ -26,7 +26,7 @@ const SearchBar = ({
         value={value}
         onChange={onChange}
         placeholder={`Search by ${placeholder}`}
-        className={`pl-9 pr-3 ${sizeClasses} border ${borderColor} rounded-md w-full focus:outline-none focus:ring-2 ${focusColor} transition-all`}
+        className={`pl-9 pr-3  ${sizeClasses} border ${borderColor} rounded-md w-full focus:outline-none focus:ring-2 ${focusColor} transition-all`}
       />
     </div>
   );

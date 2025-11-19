@@ -70,7 +70,7 @@ const currentMenu = menus[role] || [];
               e.preventDefault();
               logout();
               toast.success("Logout Sucessfully");
-              navigate("/admin/login");
+              navigate("/login");
             }}
             className="flex items-center gap-3 px-8 py-2 rounded-lg text-sm font-medium transition-all mb-16"
           >

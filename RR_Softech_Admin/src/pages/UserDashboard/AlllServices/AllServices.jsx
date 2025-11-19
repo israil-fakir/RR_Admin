@@ -46,11 +46,11 @@ export default function AllServices() {
   return (
     <div className="container mx-auto px-4 py-10">
       {/* Page Header */}
-      <div className="mb-10 text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">
+      <div className="mb-2 ">
+        <h1 className="text-3xl font-bold text-blue-600 mb-3">
           Our Services
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 ">
           Choose from our comprehensive range of digital services designed to
           elevate your business
         </p>

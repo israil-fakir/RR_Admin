@@ -1,12 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "../../hooks/UserDashboard/useAuth";
 
-
-export default function PublicRoute({to}) {
+export default function PublicRoute({ to }) {
   const { auth } = useAuth();
 
-  // If logged in → Redirect to dashboard (prevents back navigation)
-  if (auth.user) {
+ // if (loading) return null; // prevent flicker
+
+  // If logged in → go to role redirect
+  if (auth?.access) {
     return <Navigate to={to} replace />;
   }
 

@@ -35,7 +35,7 @@ export default function Topbar() {
     logout();
     toast.success("Logout Sucessfully");
     setOpenProfileMenu(false);
-    navigate("/user/login");
+    navigate("/login");
   };
 
   return (

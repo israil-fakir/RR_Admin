@@ -3,23 +3,25 @@ import { stats } from "../../../api/admin/Stats";
 import SearchBar from "../../../components/shared/admin/SearchBar";
 import OrderCard from "../../../components/shared/userDashboard/OrderCard";
 import { fetchOrders } from "../../../api/UserDashboard/orders";
+import Pagination from "../../../components/shared/userDashboard/Pagination";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8; 
 
-  // ---------------------------
-  // Load Orders From API
-  // ---------------------------
   useEffect(() => {
     async function loadOrders() {
       try {
         setLoading(true);
-        const data = await fetchOrders(); // API call
-        setOrders(data);
-        setFilteredOrders(data);
+        const data = await fetchOrders();
+        const sorted = [...data].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setOrders(sorted);
       } catch (error) {
         console.error("Failed to load orders:", error);
       } finally {
@@ -30,36 +32,37 @@ export default function Dashboard() {
     loadOrders();
   }, []);
 
-  // ---------------------------
-  // Filter Orders Based on Search
-  // ---------------------------
-useEffect(() => {
-  const text = search.toLowerCase();
+  // Search logic
+  const filteredOrders = orders.filter((order) => {
+    const text = search.toLowerCase();
+    const planDetails = order.plan_details?.toLowerCase() || "";
+    const planPrice = order.plan_price ? order.plan_price.toString().toLowerCase() : "";
+    const planData = order.created_at? order.created_at.toString().toLowerCase(): "";
+    const planStatus = order.status? order.status.toString().toLowerCase(): "";
 
-  const filtered = orders.filter((order) => {
-    const serviceName = order.serviceName?.toString()?.toLowerCase() || "";
-    const plan = order.plan?.toString()?.toLowerCase() || "";
-    const firstName = order.user?.first_name?.toString()?.toLowerCase() || "";
-    const lastName = order.user?.last_name?.toString()?.toLowerCase() || "";
 
     return (
-      serviceName.includes(text) ||
-      plan.includes(text) ||
-      firstName.includes(text) ||
-      lastName.includes(text)
+      planDetails.includes(text) ||
+      planPrice.includes(text) ||
+      planData.includes(text)  ||
+      planStatus.includes(text)
     );
   });
 
-  setFilteredOrders(filtered);
-}, [search, orders]);
+  // Ensure filtered results also stay sorted
+  const sortedFilteredOrders = [...filteredOrders].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
 
-  // ---------------------------
-  // View Details Handler
-  // ---------------------------
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedOrders = sortedFilteredOrders.slice(
+    startIndex,
+    startIndex + pageSize
+  );
+  const totalPages = Math.ceil(sortedFilteredOrders.length / pageSize);
+
   const handleViewDetails = (order) => {
     console.log("View details clicked:", order);
-    // Navigate to order details page like:
-    // navigate(`/admin/orders/${order.id}`);
   };
 
   return (
@@ -75,15 +78,17 @@ useEffect(() => {
           </p>
         </div>
 
-        {/* Search Bar */}
         <SearchBar
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search orders..."
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1); 
+          }}
+          placeholder="status,price,name"
           size="sm"
-          className="relative w-full md:w-64 rounded-xl"
+          className="relative w-full md:w-64 rounded-xl bg-white"
           iconColor="text-gray-400"
-          borderColor="border-gray-200"
+          borderColor="border-gray-400"
           focusColor="focus:ring-blue-500"
         />
       </div>
@@ -119,20 +124,31 @@ useEffect(() => {
 
       {loading ? (
         <p className="text-gray-500 text-sm">Loading orders...</p>
-      ) : filteredOrders.length === 0 ? (
+      ) : sortedFilteredOrders.length === 0 ? (
         <p className="text-gray-500 py-6 text-center">
           No matching orders found.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filteredOrders.map((order) => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              onViewDetails={() => handleViewDetails(order)}
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {paginatedOrders.map((order) => (
+              <OrderCard
+                key={order.id}
+                order={order}
+                onViewDetails={() => handleViewDetails(order)}
+              />
+            ))}
+          </div>
+
+          {/* PAGINATION */}
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
-          ))}
-        </div>
+          </div>
+        </>
       )}
     </div>
   );

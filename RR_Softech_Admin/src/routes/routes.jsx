@@ -24,20 +24,39 @@ import Rejected from "./../pages/UserDashboard/Rejected/Rejected";
 import ApprovalPending from "../pages/admin/ApprovalPending/ApprovalPending";
 import AwaitingPayment from "../pages/UserDashboard/AwaitingPayment/AwaitingPayment";
 import AllServices from "../pages/UserDashboard/AlllServices/AllServices";
+import RoleRedirect from "../components/shared/userDashboard/auth/RoleRedirect";
+import EmployeeMassage from "../pages/employee/Massage/EmployeeMassage";
 
 const router = createBrowserRouter([
+  // ============================
+  // PUBLIC ROUTE
+  // ============================
   {
-    element: <PublicRoute to="/user/orders" />,
-    children: [{ path: "user/login", element: <AuthModal role="CUSTOMER" /> }],
+    element: <PublicRoute to="/redirect-by-role" />,
+    children: [
+      {
+        path: "/login",
+        element: <AuthModal role="OWNER" />,
+      },
+    ],
   },
 
   {
-    element: <ProtectedRoute to="/user/login" />,
+    path: "/redirect-by-role",
+    element: <RoleRedirect />,
+  },
+
+  // ============================
+  // CUSTOMER ROUTES
+  // ============================
+  {
+    element: <ProtectedRoute role="CUSTOMER" to="/login" />,
     children: [
       {
-        path: "user",
+        path: "/customer",
         element: <DashboardLayout />,
         children: [
+          { index: true, element: <OrdersList /> },
           { path: "orders", element: <OrdersList /> },
           { path: "pending", element: <Pending /> },
           { path: "awaiting-payment", element: <AwaitingPayment /> },
@@ -52,25 +71,35 @@ const router = createBrowserRouter([
     ],
   },
 
+  // ============================
+  // EMPLOYEE ROUTES
+  // ============================
   {
-    path: "/admin",
-    element: <AdminRoleSelector />,
-  },
-
-  {
-    element: <PublicRoute to="/admin/dashboard" />,
+    element: <ProtectedRoute role="EMPLOYEE" to="/login" />,
     children: [
-      { path: "admin/login", element: <AuthModal role="OWNER" /> },
-      { path: "employee/login", element: <AuthModal role="EMPLOYEE" /> },
-      { path: "employee/login/pending", element: <ApprovalPending /> },
+      {
+        path: "/employee",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "services", element: <Services /> },
+          { path: "transactions", element: <Transactions /> },
+          { path: "analytics", element: <Analytics /> },
+          { path: "messages", element: <EmployeeMassage /> },
+          { path: "feedback", element: <Feedback /> },
+        ],
+      },
     ],
   },
 
+  // ============================
+  // ADMIN ROUTES
+  // ============================
   {
-    element: <ProtectedRoute to="/admindashboard" />,
+    element: <ProtectedRoute role="OWNER" to="/login" />,
     children: [
       {
-        path: "/admindashboard",
+        path: "/admin",
         element: <AdminLayout />,
         children: [
           { index: true, element: <Dashboard /> },
@@ -86,25 +115,13 @@ const router = createBrowserRouter([
     ],
   },
 
+  // ============================
+  // 404 FALLBACK
+  // ============================
   {
-    element: <ProtectedRoute to="/employeedashboard" />,
-    children: [
-      {
-        path: "/employeedashboard",
-        element: <AdminLayout />,
-        children: [
-          { index: true, element: <Dashboard /> },
-          { path: "services", element: <Services /> },
-          { path: "transactions", element: <Transactions /> },
-          { path: "analytics", element: <Analytics /> },
-          { path: "messages", element: <Messages /> },
-          { path: "feedback", element: <Feedback /> },
-        ],
-      },
-    ],
+    path: "*",
+    element: <NotFound />,
   },
-
-  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;

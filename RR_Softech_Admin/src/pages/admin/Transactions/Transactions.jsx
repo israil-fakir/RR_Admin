@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import SearchBar from "../../../components/shared/admin/SearchBar";
 import { fetchTransactionsall } from "../../../api/UserDashboard/transaction";
-
+import Pagination from "../../../components/shared/userDashboard/Pagination";
 
 export default function Transactions() {
   const [search, setSearch] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Status Color Map
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+
+  // Status Colors
   const statusColor = {
     SUCCESS: "bg-green-600 text-white",
     FAILED: "bg-red-600 text-white",
     PENDING: "bg-yellow-600 text-white",
   };
 
-  // Fetch Data
+  // Load Data
   useEffect(() => {
     async function loadTransactions() {
       try {
@@ -27,20 +31,35 @@ export default function Transactions() {
         setLoading(false);
       }
     }
-
     loadTransactions();
   }, []);
 
-  // Search Filter
+  // Search Logic (search all fields)
   const filteredData = transactions.filter((item) => {
-    const searchText = search.toLowerCase();
+    const s = search.toLowerCase();
+    const dateString = new Date(item.timestamp).toLocaleString().toLowerCase();
+
     return (
-      item.service_name.toLowerCase().includes(searchText) ||
-      item.plan_name.toLowerCase().includes(searchText) ||
-      item.id.toString().includes(searchText) ||
-      item.order_id.toString().includes(searchText)
+      item.id.toString().includes(s) ||
+      item.order_id.toString().includes(s) ||
+      item.service_name.toLowerCase().includes(s) ||
+      item.plan_name.toLowerCase().includes(s) ||
+      item.amount.toString().includes(s) ||
+      item.status.toLowerCase().includes(s) ||
+      dateString.includes(s)
     );
   });
+
+  // Pagination
+  const lastIndex = currentPage * itemsPerPage;
+  const firstIndex = lastIndex - itemsPerPage;
+  const currentItems = filteredData.slice(firstIndex, lastIndex);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="p-6 mx-auto">
@@ -57,12 +76,12 @@ export default function Transactions() {
       {/* Search */}
       <SearchBar
         value={search}
-        placeholder="search: service, plan, order ID, transaction ID..."
+        placeholder="Search by transaction ID, order ID, service, plan, amount, date, status..."
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4"
+        className="mb-5"
       />
 
-      {/* Loading */}
+      {/* Loading State */}
       {loading && (
         <div className="text-center py-10 text-gray-500 text-sm">
           Loading transactions...
@@ -80,15 +99,14 @@ export default function Transactions() {
                 <th className="py-3 px-4">Service Name</th>
                 <th className="py-3 px-4">Plan</th>
                 <th className="py-3 px-4">Amount</th>
-                <th className="py-3 px-4">Time</th>
+                <th className="py-3 px-4">Date & Time</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {filteredData.length ? (
-                filteredData.map((item) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((item) => (
                   <tr
                     key={item.id}
                     className="border-b border-gray-200 text-sm hover:bg-gray-100 transition"
@@ -108,11 +126,6 @@ export default function Transactions() {
                         {item.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4">
-                      <button className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg cursor-pointer">
-                        View Details
-                      </button>
-                    </td>
                   </tr>
                 ))
               ) : (
@@ -127,6 +140,17 @@ export default function Transactions() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </div>
       )}
     </div>

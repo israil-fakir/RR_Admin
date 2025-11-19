@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import Sidebar from "./Sidebar";
 import ChatBox from "../../../components/common/ChatBox";
+import Sidebar from "../../admin/Messages/Sidebar";
+
 
 /**
  * Messages page for employees/admins.
  * - Sidebar (WhatsApp-like)
  * - ChatBox
  */
-export default function Messages() {
+export default function EmployeeMassage() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -26,7 +27,7 @@ export default function Messages() {
         {selectedOrder ? (
           <div className="max-w-9xl mx-auto ">
             <ChatBox
-              currentUser="OWNER"
+              currentUser="EMPLOYEE"
               orderId={selectedOrder}
               chatUser={selectedUser}
               divHeight="h-[85vh]"
