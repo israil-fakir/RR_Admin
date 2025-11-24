@@ -6,7 +6,7 @@ function ServiceDescription({ text }) {
   return (
     <div>
       <p
-        className={`text-gray-600 leading-relaxed mb-2 ${
+        className={`text-gray-600 leading-relaxed ${
           expanded ? "" : "line-clamp-4"
         }`}
       >

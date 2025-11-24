@@ -1,30 +1,30 @@
 
 import { useCallback, useEffect, useState } from "react";
 import apiClient, { refreshTokenApi } from "../../api/auth";
-// import { getStoredTokens } from './../../utils/UserDashboard/authUtils/getStoredTokens';
-// import { clearTokens } from './../../utils/UserDashboard/authUtils/clearTokens';
-
-
 
 
 const REFRESH_KEY = "auth_refresh";
 const ACCESS_KEY = "auth_access";
 const USER_KEY = "auth_user";
 const Role = "role" ;
+const user_ID = "user_id" ;
 let isRefreshing = false;
 let refreshPromise = null;
 
-export function saveTokens({ access, refresh, user = null ,role}) {
+export function saveTokens({ access, refresh, user = null ,role,userID}) {
+  
   if (access) localStorage.setItem(ACCESS_KEY, access);
   if (refresh) localStorage.setItem(REFRESH_KEY, refresh);
   if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
   if (role) localStorage.setItem(Role, JSON.stringify(role));
+  if (userID) localStorage.setItem(user_ID, JSON.stringify(userID));
 }
 export function clearTokens() {
   localStorage.removeItem(ACCESS_KEY);
   localStorage.removeItem(REFRESH_KEY);
   localStorage.removeItem(USER_KEY);
   localStorage.removeItem(Role);
+  localStorage.removeItem(user_ID);
 }
 export function getStoredTokens() {
   return {
@@ -32,6 +32,7 @@ export function getStoredTokens() {
     refresh: localStorage.getItem(REFRESH_KEY),
     user: JSON.parse(localStorage.getItem(USER_KEY) || "null"),
     role:JSON.parse(localStorage.getItem(Role)),
+    userID:JSON.parse(localStorage.getItem(user_ID)),
   };
 }
 
@@ -52,6 +53,8 @@ export default function useAuth() {
   // attach axios interceptor once
   useEffect(() => {
     const requestInterceptor = apiClient.interceptors.request.use((config) => {
+
+      
       const token = localStorage.getItem(ACCESS_KEY);
       if (token) {
         config.headers = config.headers || {};

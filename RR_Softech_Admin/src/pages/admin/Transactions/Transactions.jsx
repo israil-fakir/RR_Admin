@@ -10,7 +10,7 @@ export default function Transactions() {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const itemsPerPage = 10;
 
   // Status Colors
   const statusColor = {

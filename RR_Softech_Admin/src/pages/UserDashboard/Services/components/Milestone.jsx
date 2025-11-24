@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { statusColors } from "../../../../utils/UserDashboard/services/statusColors";
 
 
-export default function Milestone({milestoneData,loading,setActiveTab}) {
+export default function Milestone({milestoneData,loading,setActiveTab,onSelectMilestone }) {
 
   const [milestones,setMilestones] = useState([])
   
@@ -16,6 +16,8 @@ export default function Milestone({milestoneData,loading,setActiveTab}) {
   
   const handlePayNow = (id) => {
     const milestone = milestones.find((m) => m.id === id);
+
+     onSelectMilestone(id);
 
     if (!milestone) {
       console.error("Milestone not found!");

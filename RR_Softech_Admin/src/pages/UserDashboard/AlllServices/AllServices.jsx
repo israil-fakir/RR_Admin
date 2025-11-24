@@ -22,20 +22,15 @@ export default function AllServices() {
     load();
   }, []);
 
-  const handleViewPlans = (service) => {
-    setSelectedService(service);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedService(null);
-  };
+  const handleViewPlans = (service) => setSelectedService(service);
+  const handleCloseModal = () => setSelectedService(null);
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
+      <div className="flex justify-center items-center min-h-[50vh] px-4">
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
-          <p className="text-lg font-semibold text-gray-600">
+          <p className="text-base sm:text-lg font-semibold text-gray-600">
             Loading services…
           </p>
         </div>
@@ -44,27 +39,29 @@ export default function AllServices() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-10">
-      {/* Page Header */}
-      <div className="mb-2 ">
-        <h1 className="text-3xl font-bold text-blue-600 mb-3">
-          Our Services
-        </h1>
-        <p className="text-lg text-gray-600 ">
-          Choose from our comprehensive range of digital services designed to
-          elevate your business
-        </p>
-      </div>
+    <section className="w-full py-8 sm:py-10 lg:py-12">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8">
+        {/* Page Header */}
+        <header className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-blue-600 mb-2">
+            Our Services
+          </h1>
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl">
+            Choose from our comprehensive range of digital services designed to
+            elevate your business.
+          </p>
+        </header>
 
-      {/* Services Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service) => (
-          <ServiceCard
-            key={service.id}
-            service={service}
-            onViewPlans={handleViewPlans}
-          />
-        ))}
+        {/* Services Grid */}
+        <div className="grid gap-5 sm:gap-6 lg:gap-8 md:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-1 mdx:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+          {services.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onViewPlans={handleViewPlans}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Service Details Modal */}
@@ -73,6 +70,6 @@ export default function AllServices() {
         service={selectedService}
         onClose={handleCloseModal}
       />
-    </div>
+    </section>
   );
 }

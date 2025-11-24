@@ -7,4 +7,5 @@ export const statusColors = {
   ACTIVE: "bg-blue-500",
   DEFAULT: "bg-gray-500",
   AWAITING_PAYMENT: "bg-yellow-400",
+  VERIFYING:"bg-green-300"
 };

@@ -7,7 +7,7 @@ import { loginUser } from "../../../../api/auth";
 import { handleApiError } from "../../../../utils/UserDashboard/services/handleApiError";
 import { loginFields } from "../../../../utils/UserDashboard/services/loginFields";
 
-export default function LoginFrom({ setMode,role }) {
+export default function LoginFrom({ setMode }) {
   const { setAuthState } = useAuth();
   const navigate = useNavigate();
 
@@ -15,18 +15,20 @@ export default function LoginFrom({ setMode,role }) {
     try {
       const { email, password } = values;
       const tokenObj = await loginUser({ email, password });
+      
       setAuthState({
         access: tokenObj.access,
         refresh: tokenObj.refresh,
-        user: { email },
-        role:role,
+        user: tokenObj.user.email,
+        role:tokenObj.user.role,
+        userID: tokenObj.user.id,
       });
       toast.success("Logged in successfully");
-      if(role === "CUSTOMER"){
+      if(tokenObj.user.role === "CUSTOMER"){
         navigate("/customer");
-      }else if(role === "OWNER"){
+      }else if(tokenObj.user.role === "OWNER"){
         navigate("/admin");
-      }else if(role === "EMPLOYEE"){
+      }else if(tokenObj.user.role === "EMPLOYEE"){
         navigate("/employee");
       }
     } catch (err) {

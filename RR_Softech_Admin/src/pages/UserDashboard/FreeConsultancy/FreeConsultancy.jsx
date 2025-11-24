@@ -1,90 +1,79 @@
-import { Phone } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { showAppointments } from "../../../api/UserDashboard/appointments";
+import { showAvailabilities } from "../../../api/employee/availabilities";
+import AppointmentList from "./AppointmentList";
+import BookConsultancyModal from "./BookConsultancyModal";
+import { fetchEmployees } from "../../../api/UserDashboard/employee";
 
 export default function FreeConsultancy() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [appointments, setAppointments] = useState([]);
+  const [availabilities, setAvailabilities] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+    const [employeeList,setEmployeeList] = useState([])
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const loadAppointments = async () => {
+    try {
+      const data = await showAppointments();
+      setAppointments(data);
+    } catch (error) {
+      console.error("Failed to load appointments", error);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Submitted:", formData);
+  // Load employee availabilities
+  const loadAvailabilities = async () => {
+    try {
+      const data = await showAvailabilities();
+      setAvailabilities(data);
+    } catch (err) {
+      console.error("Failed to load availabilities", err);
+    }
   };
+
+  const loadEmployees = async () => {
+    try {
+      const data = await fetchEmployees();
+      setEmployeeList(data);
+    } catch (err) {
+      console.error("Failed to load availabilities", err);
+    }
+  };
+
+  useEffect(() => {
+    loadAppointments();
+    loadAvailabilities();
+    loadEmployees();
+  }, []);
 
   return (
-    <div className="py-12 px-6 flex justify-center items-center bg-[#F5F5F5]">
-      <div className="bg-white shadow-xl rounded-3xl p-8 max-w-2xl w-full border border-blue-100">
-        {/* Header Section */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-4 rounded-full shadow-md mb-4">
-            <Phone className="text-white w-7 h-7" />
-          </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-            Book a Free 30-Minute Consultation
-          </h2>
-          <p className="text-gray-600 mt-2 max-w-md">
-            Let’s discuss your project requirements and how our experts can help
-            you achieve success.
-          </p>
-        </div>
+    <div className="p-6">
+      {/* TOP BAR */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Free Consultancy
+        </h1>
 
-        {/* Form Section */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Message</label>
-            <textarea
-              name="message"
-              value={formData.message}
-              onChange={handleChange}
-              placeholder="Briefly describe your project..."
-              rows="4"
-              required
-              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            ></textarea>
-          </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all duration-300"
-            >
-              Schedule Consultation
-            </button>
-          </div>
-        </form>
+        <button
+          onClick={() => setOpenModal(true)}
+          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Book Free Consultancy
+        </button>
       </div>
+
+      {/* APPOINTMENT LIST */}
+      <AppointmentList showAppointments={appointments} />
+
+      {/* BOOKING MODAL */}
+      {openModal && (
+        <BookConsultancyModal
+          appointments={appointments}
+          availabilities={availabilities}
+          employeeList = {employeeList}
+          onClose={() => setOpenModal(false)}
+          onSuccess={loadAppointments}
+        />
+      )}
     </div>
   );
 }

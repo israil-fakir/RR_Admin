@@ -26,6 +26,10 @@ import AwaitingPayment from "../pages/UserDashboard/AwaitingPayment/AwaitingPaym
 import AllServices from "../pages/UserDashboard/AlllServices/AllServices";
 import RoleRedirect from "../components/shared/userDashboard/auth/RoleRedirect";
 import EmployeeMassage from "../pages/employee/Massage/EmployeeMassage";
+import PaymentSuccess from "../pages/UserDashboard/PaymentSuccess/PaymentSuccess";
+import ConsultancyRequest from "../pages/employee/ConsultancyRequest/ConsultancyRequest";
+import ConsultancyRequestAdmin from "../pages/admin/ConsultancyRequestAdmin/ConsultancyRequestAdmin";
+import VerifyingTransction from "../components/shared/admin/VerifyingTransction";
 
 const router = createBrowserRouter([
   // ============================
@@ -36,7 +40,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/login",
-        element: <AuthModal role="OWNER" />,
+        element: <AuthModal />,
       },
     ],
   },
@@ -66,6 +70,7 @@ const router = createBrowserRouter([
           { path: "services", element: <AllServices /> },
           { path: "free-consultancy", element: <FreeConsultancy /> },
           { path: "change-password", element: <ChangePassword /> },
+          { path: "payment-success", element: <PaymentSuccess /> },
         ],
       },
     ],
@@ -84,9 +89,12 @@ const router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "services", element: <Services /> },
           { path: "transactions", element: <Transactions /> },
-          { path: "analytics", element: <Analytics /> },
+          { path: "transactions-verify", element: <VerifyingTransction /> },
           { path: "messages", element: <EmployeeMassage /> },
           { path: "feedback", element: <Feedback /> },
+          { path: "change-password", element: <ChangePassword /> },
+          { path: "consultancy-services", element: <ConsultancyRequest /> },
+
         ],
       },
     ],
@@ -106,8 +114,9 @@ const router = createBrowserRouter([
           { path: "users-manage", element: <UsersManagement /> },
           { path: "services", element: <Services /> },
           { path: "transactions", element: <Transactions /> },
-          { path: "analytics", element: <Analytics /> },
+          // { path: "analytics", element: <Analytics /> },
           { path: "messages", element: <Messages /> },
+          { path: "consultancy-services", element: <ConsultancyRequestAdmin /> },
           { path: "feedback", element: <Feedback /> },
           { path: "settings", element: <Settings /> },
         ],

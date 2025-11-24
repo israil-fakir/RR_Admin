@@ -2,7 +2,6 @@ import DateTime from "../../../../utils/UserDashboard/services/DateTime";
 import { statusColors } from "../../../../utils/UserDashboard/services/statusColors";
 
 export default function TransactionSection({ transactionData, loading }) {
-  console.log(transactionData);
 
   if (loading) {
     return <p className="text-gray-600">Loading your Transactions...</p>;

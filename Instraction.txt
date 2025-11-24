@@ -1,25 +1,8 @@
-My Orders:
-	1. Grid view 
-	2. list View( like Table)
-	3. Don't Show Cancelled
-Card:
-	1. Show review all card
-Card pending: 
-	1. chat,transction ,payment, review
-Card Accepted
-	1. chat, transction,milestone, work-update,reviews,payment
-Card rejected
-	 chat disable chat history show ,reviews,reviews
-Card finished
-	chatting,tracms, feedback dibo and dekbo
-consultancy:
-	list view te consultancy
-	create the new consultancy
+Footer content....
+Payment method add korte parbe
+Bank account add korete hove 
 
-profile section 
-	logout 
-	password change	
-	profile (edit)
 
-**************************************
+user name click id => full summary 
 
+user management when clikc open new page and include all summary

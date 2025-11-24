@@ -1,26 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { stats } from "../../../api/admin/Stats";
 import SearchBar from "../../../components/shared/admin/SearchBar";
 import OrderCard from "../../../components/shared/userDashboard/OrderCard";
 import { fetchOrders } from "../../../api/UserDashboard/orders";
 import Pagination from "../../../components/shared/userDashboard/Pagination";
+import useAuth from "../../../hooks/UserDashboard/useAuth";
+import DashboardAnalytices from "../DashboardAnalytices/DashboardAnalytices";
+import EmployeeAnalytices from "../../employee/employeeAnalytices/employeeAnalytices";
+import { showDashboardAnalytics } from "../../../api/admin/dashboardAnalytics";
+import AdminModel from "../../../components/shared/admin/AdminModel";
+import { TAB_CONFIG_ADMIN } from "../../../utils/admin/TAB_CONFIG_ADMIN";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
+  const [statusFilter, setStatusFilter] = useState(""); // NEW STATE
   const [loading, setLoading] = useState(true);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 8; 
+  const [analytics, setAnalytics] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const visibleTabs = selectedOrder
+    ? TAB_CONFIG_ADMIN[selectedOrder.status] || []
+    : [];
+
+  const pageSize = 8;
+  const { auth } = useAuth();
 
   useEffect(() => {
     async function loadOrders() {
       try {
         setLoading(true);
         const data = await fetchOrders();
-        const sorted = [...data].sort(
+
+        const sorted = data.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-
         setOrders(sorted);
       } catch (error) {
         console.error("Failed to load orders:", error);
@@ -29,28 +44,40 @@ export default function Dashboard() {
       }
     }
 
+    async function loadAnalytics() {
+      try {
+        setAnalyticsLoading(true);
+        const data = await showDashboardAnalytics();
+        setAnalytics(data);
+      } catch (error) {
+        console.error("Failed to load analytics:", error);
+      } finally {
+        setAnalyticsLoading(false);
+      }
+    }
+
     loadOrders();
+    loadAnalytics();
   }, []);
 
-  // Search logic
+  // Extract all unique statuses
+  const statusOptions = [...new Set(orders.map((o) => o.status))];
+
+  // FILTER + SEARCH
   const filteredOrders = orders.filter((order) => {
     const text = search.toLowerCase();
-    const planDetails = order.plan_details?.toLowerCase() || "";
-    const planPrice = order.plan_price ? order.plan_price.toString().toLowerCase() : "";
-    const planData = order.created_at? order.created_at.toString().toLowerCase(): "";
-    const planStatus = order.status? order.status.toString().toLowerCase(): "";
+    const matchesSearch =
+      order.plan_details?.toLowerCase().includes(text) ||
+      order.plan_price?.toString().toLowerCase().includes(text) ||
+      order.created_at?.toString().toLowerCase().includes(text) ||
+      order.status?.toLowerCase().includes(text);
 
+    const matchesStatus = statusFilter === "" || order.status === statusFilter;
 
-    return (
-      planDetails.includes(text) ||
-      planPrice.includes(text) ||
-      planData.includes(text)  ||
-      planStatus.includes(text)
-    );
+    return matchesSearch && matchesStatus;
   });
 
-  // Ensure filtered results also stay sorted
-  const sortedFilteredOrders = [...filteredOrders].sort(
+  const sortedFilteredOrders = filteredOrders.sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
 
@@ -59,11 +86,10 @@ export default function Dashboard() {
     startIndex,
     startIndex + pageSize
   );
+
   const totalPages = Math.ceil(sortedFilteredOrders.length / pageSize);
 
-  const handleViewDetails = (order) => {
-    console.log("View details clicked:", order);
-  };
+  const handleViewDetails = (order) => setSelectedOrder(order);
 
   return (
     <div className="p-6">
@@ -78,49 +104,54 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <SearchBar
-          value={search}
+        {/* SEARCH + FILTER DROPDOWN */}
+        <div className="flex flex-col sm:flex-row gap-3 items-center">
+          <SearchBar
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="status, price, name"
+            size="sm"
+            className="relative w-full md:w-64 rounded-xl bg-white"
+            iconColor="text-gray-400"
+            borderColor="border-gray-400"
+            focusColor="focus:ring-blue-500"
+          />
+        </div>
+      </div>
+
+      {/* ANALYTICS */}
+      {auth.role === "OWNER" ? (
+        <DashboardAnalytices analytics={analytics} loading={analyticsLoading} />
+      ) : (
+        <EmployeeAnalytices />
+      )}
+
+      {/* ORDERS SECTION */}
+
+      <div className="flex items-center justify-between mt-8 mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          Recent Service Requests
+        </h2>
+
+        <select
+          value={statusFilter}
           onChange={(e) => {
-            setSearch(e.target.value);
-            setCurrentPage(1); 
+            setStatusFilter(e.target.value);
+            setCurrentPage(1);
           }}
-          placeholder="status,price,name"
-          size="sm"
-          className="relative w-full md:w-64 rounded-xl bg-white"
-          iconColor="text-gray-400"
-          borderColor="border-gray-400"
-          focusColor="focus:ring-blue-500"
-        />
+          className="w-40 px-3 py-2 border rounded-lg text-gray-700 bg-white focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Status</option>
+          {statusOptions.map((status) => (
+            <option key={status} value={status}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </option>
+          ))}
+        </select>
       </div>
-
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:gap-16 gap-4 mb-10">
-        {stats.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-gray-100"
-          >
-            <div>
-              <p className="text-sm text-gray-500">{item.title}</p>
-              <h3 className="text-xl font-semibold text-gray-800">
-                {item.value}
-              </h3>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-lg">
-              {item.icon &&
-                React.createElement(item.icon, {
-                  className: "text-blue-600",
-                  size: 24,
-                })}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* RECENT ORDERS */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-        Recent Service Requests
-      </h2>
 
       {loading ? (
         <p className="text-gray-500 text-sm">Loading orders...</p>
@@ -130,7 +161,7 @@ export default function Dashboard() {
         </p>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 mdx:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
             {paginatedOrders.map((order) => (
               <OrderCard
                 key={order.id}
@@ -140,7 +171,6 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* PAGINATION */}
           <div className="mt-8 flex justify-center">
             <Pagination
               currentPage={currentPage}
@@ -149,6 +179,15 @@ export default function Dashboard() {
             />
           </div>
         </>
+      )}
+
+      {/* MODEL */}
+      {selectedOrder && (
+        <AdminModel
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
+          visibleTabs={visibleTabs}
+        />
       )}
     </div>
   );

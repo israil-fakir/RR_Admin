@@ -15,6 +15,7 @@ export default function ChatBox({
   const [loading, setLoading] = useState(false);
   const [lastFetchedAt, setLastFetchedAt] = useState(null);
   const [sending, setSending] = useState(false);
+  
 
   const messageEndRef = useRef(null);
   const scrollRef = useRef(null);
@@ -31,7 +32,6 @@ export default function ChatBox({
       setLoading(true);
       const data = await fetchChatting();
 
-      // Defensive: ensure array
       const list = Array.isArray(data) ? data : [];
 
       const filterData = list
@@ -56,7 +56,7 @@ export default function ChatBox({
     }
   };
 
-  // initial load + polling
+
   useEffect(() => {
     loadMessages({ force: true });
     const interval = setInterval(() => loadMessages(), 2000);
@@ -64,7 +64,7 @@ export default function ChatBox({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId]);
 
-  // Auto-scroll when messages update
+
   useEffect(() => {
     if (messages.length) scrollToBottom(true);
   }, [messages]);
@@ -74,7 +74,7 @@ export default function ChatBox({
     setSending(true);
 
     const payload = {
-      message: input.trim() || (file ? file.name : ""),
+      message: input.trim(),
       order: orderId,
       // optionally include author info if your API expects it
       // author_role: currentUser
@@ -89,13 +89,6 @@ export default function ChatBox({
       console.error("Failed to send message:", err);
     } finally {
       setSending(false);
-    }
-  };
-
-  const onFileChange = (e) => {
-    const f = e.target.files?.[0];
-    if (f) {
-      setFile(f);
     }
   };
 
@@ -206,18 +199,13 @@ export default function ChatBox({
       </div>
 
       <div className="border-t border-gray-300 p-3 bg-white flex items-center gap-3">
-        <input id="fileInputChat" type="file" className="hidden" onChange={onFileChange} />
-
-        <label htmlFor="fileInputChat" className="cursor-pointer p-2 rounded hover:bg-gray-100">
-          <Paperclip size={18} />
-        </label>
 
         <div className="flex-1">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Type a message..."
+            placeholder="Type a messages..."
             className="w-full resize-none h-10 sm:h-12 rounded border border-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-300"
           />
 

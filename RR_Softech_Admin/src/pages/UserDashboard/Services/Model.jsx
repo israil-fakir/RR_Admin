@@ -18,16 +18,20 @@ export default function Model({
 }) {
   const [ordersData, setOrdersData] = useState(null); 
   const [loading, setLoading] = useState(true);
+   const [selectedMilestoneId, setSelectedMilestoneId] = useState(null);
 
-  
+
+  const handleMilestoneSelect = (id) => {
+    setSelectedMilestoneId(id);
+  };
+
   const effectiveTabs =
     Array.isArray(visibleTabs) && visibleTabs.length
       ? tabs.filter((t) => visibleTabs.includes(t.value))
       : tabs;
 
-          const [activeTab, setActiveTab] = useState(
-    effectiveTabs[0]?.value ?? "Chatting"
-  );
+    const [activeTab, setActiveTab] = useState(
+    effectiveTabs[0]?.value ?? "Chatting");
 
   const closeModal = () => {
     setSelectedOrder(null);
@@ -98,7 +102,7 @@ export default function Model({
                 />
               )}
 
-              {activeTab === "Payment" && <PaymentSection milestoneData={ordersData?.milestones || []} />}
+              {selectedMilestoneId && activeTab  === "Payment" && <PaymentSection milestoneData={ordersData?.milestones || []} milestoneId={selectedMilestoneId} />}
 
               {activeTab === "Feedback" && (
                 <FeedbackSection productId={ordersData?.id} />
@@ -109,6 +113,7 @@ export default function Model({
                   setActiveTab = {setActiveTab}
                   milestoneData={ordersData?.milestones || []}
                   loading={loading}
+                  onSelectMilestone={handleMilestoneSelect}
                 />
               )}
 

@@ -1,89 +1,152 @@
-// File: components/UserModal.jsx
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import { X } from "lucide-react";
+import { toast } from "react-toastify";
+import { registerUser } from "../../../api/auth";
 
-const UserModal = ({
-  open,
-  onClose,
-  onSubmit,
-  userData,
-  setUserData,
-}) => {
+export default function UserModal({ isOpen, onClose, onUserAdded }) {
+  const [userData, setUserData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    role: "EMPLOYEE",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setUserData({ ...userData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async () => {
+    if (!userData.first_name || !userData.email || !userData.password) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await registerUser(userData);
+
+      if (response.success) {
+        toast.success("User registered successfully — awaiting activation.");
+
+        // Refresh parent list
+        onUserAdded();  
+
+        // Close modal
+        onClose();
+
+        // Reset form
+        setUserData({
+          first_name: "",
+          last_name: "",
+          email: "",
+          role: "EMPLOYEE",
+          password: "",
+        });
+      } else {
+        toast.error(response.message || "Failed to register user.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong.");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-        {motion}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay with fade animation */}
-          <motion.div
-            className="absolute inset-0 backdrop-blur-sm bg-black/20"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          ></motion.div>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50 px-4">
+      <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl relative animate-fadeIn">
+        
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-500 hover:text-gray-800 transition"
+        >
+          <X size={22} />
+        </button>
 
-          {/* Modal Content */}
-          <motion.div
-            className="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md z-50"
-            initial={{ opacity: 0, scale: 0.9, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -20 }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          >
-            <h2 className="text-lg font-semibold mb-4">Add New User</h2>
-            <div className="space-y-3">
-              <input
-                placeholder="Full Name"
-                value={userData.name}
-                onChange={(e) =>
-                  setUserData({ ...userData, name: e.target.value })
-                }
-                className="border rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
-              />
-              <input
-                required
-                placeholder="Email Address"
-                value={userData.email}
-                onChange={(e) =>
-                  setUserData({ ...userData, email: e.target.value })
-                }
-                className="border rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                
-              />
-              <select
-                className="border rounded-md p-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={userData.status}
-                onChange={(e) =>
-                  setUserData({ ...userData, status: e.target.value })
-                }
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+        <h2 className="text-xl font-semibold mb-5 text-center">
+          Add New User
+        </h2>
 
-              <div className="flex justify-end gap-3 pt-2">
-                <button
-                  onClick={onClose}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:bg-gray-100 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={onSubmit}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-all"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </motion.div>
+        {/* Name Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="text-sm font-medium">First Name *</label>
+            <input
+              type="text"
+              name="first_name"
+              value={userData.first_name}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium">Last Name</label>
+            <input
+              type="text"
+              name="last_name"
+              value={userData.last_name}
+              onChange={handleChange}
+              className="w-full border px-3 py-2 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
         </div>
-      )}
-    </AnimatePresence>
-  );
-};
 
-export default UserModal;
+        {/* Email */}
+        <div className="mt-3">
+          <label className="text-sm font-medium">Email *</label>
+          <input
+            type="email"
+            name="email"
+            value={userData.email}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        {/* Role */}
+        <div className="mt-3">
+          <label className="text-sm font-medium">Role</label>
+          <select
+            name="role"
+            value={userData.role}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="EMPLOYEE">EMPLOYEE</option>
+            <option value="CUSTOMER">CUSTOMER</option>
+          </select>
+        </div>
+
+        <div className="mt-3">
+          <label className="text-sm font-medium">Password *</label>
+          <input
+            type="password"
+            name="password"
+            value={userData.password}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded-md mt-1 focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="mt-5 w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400"
+        >
+          {loading ? "Registering..." : "Register User"}
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -1,22 +1,28 @@
-// File: src/features/admin/pages/Orders.jsx
 import React, { useEffect, useState } from "react";
 import SearchBar from "../../../components/shared/admin/SearchBar";
 import { fetchOrders } from "../../../api/UserDashboard/orders";
 import OrderCard from "../../../components/shared/userDashboard/OrderCard";
 import Pagination from "../../../components/shared/userDashboard/Pagination";
+import AdminModel from "../../../components/shared/admin/AdminModel";
+import { TAB_CONFIG_ADMIN } from "../../../utils/admin/TAB_CONFIG_ADMIN";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
-
   const [activeFilter, setActiveFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const visibleTabs = selectedOrder
+    ? TAB_CONFIG_ADMIN[selectedOrder.status] || []
+    : [];
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
+  // Load Orders
   useEffect(() => {
     async function loadOrders() {
       try {
@@ -33,26 +39,28 @@ export default function Orders() {
     loadOrders();
   }, []);
 
+  // Filtering + Search
   useEffect(() => {
     let updated = [...orders];
 
-    // 1️⃣ STATUS FILTER
+    // 1️⃣ Status Filter (case-insensitive)
     if (activeFilter !== "All") {
       updated = updated.filter(
         (item) =>
-          item.status?.toLowerCase() === activeFilter.toLowerCase()
+          String(item.status || "").toLowerCase() ===
+          activeFilter.toLowerCase()
       );
     }
 
-    // 2️⃣ GLOBAL SEARCH (status + description + price + plan title)
+    // 2️⃣ Global Search
     if (search.trim() !== "") {
       const keyword = search.toLowerCase();
 
       updated = updated.filter((item) => {
-        const title = item.plan_details?.toString()?.toLowerCase() || "";
-        const desc = item.description?.toLowerCase() || "";
-        const stat = item.status?.toLowerCase() || "";
-        const price = item.plan_price?.toString()?.toLowerCase() || "";
+        const title = String(item.plan_details || "").toLowerCase();
+        const desc = String(item.description || "").toLowerCase();
+        const stat = String(item.status || "").toLowerCase();
+        const price = String(item.plan_price || "").toLowerCase();
 
         return (
           title.includes(keyword) ||
@@ -64,7 +72,7 @@ export default function Orders() {
     }
 
     setFilteredOrders(updated);
-    setCurrentPage(1); // reset pagination
+    setCurrentPage(1);
   }, [activeFilter, search, orders]);
 
   // Pagination calculations
@@ -74,12 +82,13 @@ export default function Orders() {
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
+  // Modal open
   const handleViewDetails = (order) => {
-    console.log("Viewing order:", order);
+    setSelectedOrder(order);
   };
 
   return (
-    <div className="p-6 w-full bg-white min-h-screen">
+    <div className="p-6 w-full bg-background min-h-screen">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">Orders</h1>
@@ -119,7 +128,7 @@ export default function Orders() {
         <p className="text-gray-500 text-center py-10">Loading orders...</p>
       ) : currentItems.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
             {currentItems.map((order) => (
               <OrderCard
                 key={order.id}
@@ -129,7 +138,6 @@ export default function Orders() {
             ))}
           </div>
 
-          {/* Pagination */}
           <div className="mt-8 flex justify-center">
             <Pagination
               currentPage={currentPage}
@@ -145,6 +153,15 @@ export default function Orders() {
         <p className="text-gray-500 text-center py-8">
           No matching orders found.
         </p>
+      )}
+
+      {/* MODAL (FIXED) */}
+      {selectedOrder && (
+        <AdminModel
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
+          visibleTabs={visibleTabs}
+        />
       )}
     </div>
   );

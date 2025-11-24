@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, Menu, X } from "lucide-react";
-import { adminMenuItems } from './../../../utils/admin/adminMenuItems';
+import { adminMenuItems } from "./../../../utils/admin/adminMenuItems";
 import { toast } from "react-toastify";
 import useAuth, { getStoredTokens } from "../../../hooks/UserDashboard/useAuth";
 import { employeeMenuItems } from "../../../utils/admin/employeeMenuItems";
-
-
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
@@ -14,14 +12,14 @@ export default function Sidebar() {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  const {role}= getStoredTokens();
+  const { role } = getStoredTokens();
 
   const menus = {
-  OWNER: adminMenuItems,
-  EMPLOYEE: employeeMenuItems,
-};
+    OWNER: adminMenuItems,
+    EMPLOYEE: employeeMenuItems,
+  };
 
-const currentMenu = menus[role] || [];
+  const currentMenu = menus[role] || [];
 
   return (
     <>
@@ -38,7 +36,8 @@ const currentMenu = menus[role] || [];
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:fixed top-[64px] md:top-15.5 left-0 h-[calc(100vh-64px)]  w-64 bg-blue-700 text-white flex flex-col z-40 transform transition-transform duration-300
+        className={`fixed left-0 top-[65px] h-[calc(100vh-65px)] w-64 bg-blue-700 text-white flex flex-col z-40
+        transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Navigation */}
@@ -54,7 +53,7 @@ const currentMenu = menus[role] || [];
                 ${
                   isActive
                     ? "bg-blue-600 shadow-sm"
-                    : "hover:bg-blue-600 hover:shadow-sm "
+                    : "hover:bg-blue-600 hover:shadow-sm"
                 }`}
               >
                 {item.icon}

@@ -24,7 +24,8 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:fixed top-[64px] md:top-15.5 left-0 h-[calc(100vh-64px)]  w-64 bg-blue-700 text-white flex flex-col z-40 transform transition-transform duration-300
+        className={`fixed left-0 top-[65px] h-[calc(100vh-65px)] w-64 bg-blue-700 text-white flex flex-col z-40
+        transform transition-transform duration-300
         ${open ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         {/* Navigation */}

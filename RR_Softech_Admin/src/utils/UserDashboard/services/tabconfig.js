@@ -1,6 +1,6 @@
 export  const TAB_CONFIG = {
-    PENDING: ["Chatting", "Transaction","Milestone", "Payment", "Reviews"],
-    AWAITING_PAYMENT: ["Chatting", "Transaction", "Payment", "Reviews"],
+    PENDING: ["Chatting", "Transaction","Milestone", "Reviews"],
+    AWAITING_PAYMENT: ["Chatting", "Transaction","Milestone", "Reviews"],
     ACTIVE: [
       "Chatting",
       "Transaction",

@@ -28,7 +28,7 @@ export default function ChangePassword() {
       toast.success(res.message || "Password updated successfully! Please Log in with New Password");
       // log out user for safety
       logout();
-      navigate("/user/login");   
+      navigate("/login");   
 
     } catch (err) {
       if (err.response?.data.old_password === "Wrong password.") {
