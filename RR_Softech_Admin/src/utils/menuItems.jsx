@@ -6,6 +6,7 @@ import {
   Flag,
   MessageCircle,
   CreditCard,
+  SquaresExclude,
 } from "lucide-react";
 
 export const menuItems = [
@@ -15,6 +16,6 @@ export const menuItems = [
   { name: "Accepted", icon: <CheckCircle size={18} />, path: "/customer/accepted" },
   { name: "Cancelled", icon: <XCircle size={18} />, path: "/customer/rejected" },
   { name: "Finished", icon: <Flag size={18} />, path: "/customer/finished" },
-  { name: "All Services", icon: <Flag size={18} />, path: "/customer/services" },
+  { name: "All Services", icon: <SquaresExclude size={18} />, path: "/customer/services" },
   { name: "Free Consultancy", icon: <MessageCircle size={18} />, path: "/customer/free-consultancy" },
 ];

@@ -12,11 +12,12 @@ export default function TransactionSection({ transactionData, loading }) {
       <table className="w-full border-collapse">
         <thead className="bg-gray-50">
           <tr className="text-left text-sm text-gray-600">
-            <th className="py-3 px-4">Date & Time</th>
-            <th className="py-3 px-4">Service</th>
-            <th className="py-3 px-4 text-center">Transaction ID</th>
-            <th className="py-3 px-4">Amount</th>
-            <th className="py-3 px-4">Status</th>
+            <th className="text-center">Transaction ID</th>
+            <th className="pl-8">Date & Time</th>
+            <th className="pl-8">Milestone Title</th>
+            <th className="pl-2">Amount</th>
+            <th className="pl-2">Payment Method</th> 
+            <th className="pl-8">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -26,12 +27,13 @@ export default function TransactionSection({ transactionData, loading }) {
                 key={item.id}
                 className="border-b border-gray-200 text-sm hover:bg-gray-100 transition"
               >
+                <td className="text-center font-semibold"># {item.id}</td>
                 <td className="py-3 px-4">
                   <DateTime timestamp={item.timestamp} />
                 </td>
-                <td className="py-3 px-4">{item.service_name}</td>
-                <td className="py-3 px-4 font-medium text-center">{item.id}</td>
+                <td className="py-3 px-4">{item.milestone_title}</td>
                 <td className="py-3 px-4 font-semibold">{item.amount}</td>
+                <td className="pl-8">{item.provider_name}</td>
                 <td className="py-3 px-4">
                   <span
                     className={`px-4 py-1 rounded-xl text-xs font-medium ${

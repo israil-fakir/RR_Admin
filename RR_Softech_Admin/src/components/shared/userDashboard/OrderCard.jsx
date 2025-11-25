@@ -93,13 +93,13 @@ export default function OrderCard({
 
   return (
     <div className="w-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
-      <div className={isList ? "p-4" : "p-5 h-[140px]"}>
+      <div className={isList ? "p-4" : "p-5 h-auto"}>
         {isList ? (
           /* ========== LIST VIEW ========== */
-          <div className="flex items-center justify-between gap-4">
-            {/* LEFT: dynamic icon + title */}
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="p-2.5 rounded-lg bg-blue-50">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            {/* LEFT: icon + title */}
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+              <div className="p-2.5 rounded-lg bg-blue-50 shrink-0">
                 <Icon className="text-blue-600 w-5 h-5" strokeWidth={2} />
               </div>
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2">
@@ -108,18 +108,20 @@ export default function OrderCard({
             </div>
 
             {/* RIGHT: amount + date + status + eye */}
-            <div className="flex items-center gap-3 flex-shrink-0 text-sm">
+            <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 text-sm">
               <p className="text-base sm:text-lg font-bold text-gray-900">
                 ${plan_price || 0}
               </p>
 
               <div className="flex items-center gap-1.5 text-gray-500">
                 <CalendarDays size={14} strokeWidth={2} />
-                <span>{formattedDate || "00 00 0000"}</span>
+                <span className="text-xs sm:text-sm">
+                  {formattedDate || "00 00 0000"}
+                </span>
               </div>
 
               <span
-                className={`px-3 py-1 text-xs font-semibold rounded-lg capitalize whitespace-nowrap ${statusColors[status]}`}
+                className={`px-3 py-1 text-[11px] sm:text-xs font-semibold rounded-lg capitalize whitespace-nowrap ${statusColors[status]}`}
               >
                 {status || "No Status"}
               </span>
@@ -135,9 +137,9 @@ export default function OrderCard({
           </div>
         ) : (
           /* ========== GRID VIEW ========== */
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3.5 flex-1 basis-24">
-              <div className="p-2.5 rounded-lg bg-blue-50 mt-0.5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex items-start gap-3.5 flex-1 min-w-0">
+              <div className="p-2.5 rounded-lg bg-blue-50 mt-0.5 shrink-0">
                 <Icon className="text-blue-600 w-5 h-5" strokeWidth={2} />
               </div>
               <div className="flex-1 min-w-0">
@@ -153,8 +155,9 @@ export default function OrderCard({
                 </div>
               </div>
             </div>
+
             <span
-              className={`px-3 py-1 text-xs font-semibold rounded-lg capitalize whitespace-nowrap ${statusColors[status]}`}
+              className={`px-3 py-1 text-xs font-semibold rounded-lg capitalize whitespace-nowrap self-start ${statusColors[status]}`}
             >
               {status || "No Status"}
             </span>
@@ -164,7 +167,7 @@ export default function OrderCard({
 
       {/* Bottom button only for grid view */}
       {!isList && (
-        <div className="p-5">
+        <div className="px-5 pb-5">
           <button
             onClick={onViewDetails}
             className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"

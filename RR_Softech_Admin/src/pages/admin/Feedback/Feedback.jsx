@@ -4,6 +4,7 @@ import SearchBar from "../../../components/shared/admin/SearchBar";
 import { deleteReview, fetchReviews } from "../../../api/UserDashboard/reviews";
 import Pagination from "../../../components/shared/userDashboard/Pagination";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 // ----------------------
 // Helper Functions
@@ -49,7 +50,7 @@ export default function Feedback() {
       } catch (err) {
         setError("Failed to load reviews. Please try again.");
         console.log(err);
-        
+
       } finally {
         setLoading(false);
       }
@@ -70,7 +71,7 @@ export default function Feedback() {
   const totalPages = Math.ceil(filteredData.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedReviews = filteredData.slice(startIndex, startIndex + pageSize);
-  
+
 
   const handleArchive = async (id) => {
     try {
@@ -82,8 +83,18 @@ export default function Feedback() {
     }
   };
 
+  if (loading) {
+    return (
+      <LoadingSpinner
+        variant="fullscreen"
+        size="lg"
+        message="Loading Feedback..."
+      />
+    );
+  }
+
   return (
-    <div className="p-6 mx-auto">
+    <div className="relative bg-gray-50 h-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 border border-gray-200 rounded-xl overflow-x-hidden">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">Customer Feedback</h2>
         <p className="text-gray-500 text-sm">
@@ -113,7 +124,7 @@ export default function Feedback() {
         <>
           <div className="space-y-4">
             {paginatedReviews.length ? (
-              paginatedReviews.map((item) => (        
+              paginatedReviews.map((item) => (
                 <div
                   key={item.id}
                   className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition"

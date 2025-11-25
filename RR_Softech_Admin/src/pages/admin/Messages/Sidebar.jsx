@@ -5,17 +5,11 @@ import { fetchChatting } from "../../../api/UserDashboard/chatting";
 /**
  * Sidebar with sticky header + smooth mobile drawer
  */
-export default function Sidebar({ onSelectConversation }) {
+export default function Sidebar({ onSelectConversation, setParentLoading }) {
   const [users, setUsers] = useState([]);
   const [query, setQuery] = useState("");
   const [unreadMap, setUnreadMap] = useState({});
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    loadUsers();
-    const interval = setInterval(loadUsers, 2000);
-    return () => clearInterval(interval);
-  }, []);
 
   const loadUsers = async () => {
     try {
@@ -70,6 +64,22 @@ export default function Sidebar({ onSelectConversation }) {
     }
   };
 
+  useEffect(() => {
+    // Initial load with fullscreen spinner
+    const loadInitial = async () => {
+      if (setParentLoading) setParentLoading(true);
+      await loadUsers();
+      if (setParentLoading) setParentLoading(false);
+    };
+
+    loadInitial();
+
+    // Polling without touching parent loading
+    const interval = setInterval(loadUsers, 2000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const select = (user) => {
     localStorage.setItem(`chat_last_seen_${user.id}`, new Date().toISOString());
     setUnreadMap((p) => ({ ...p, [user.id]: 0 }));
@@ -117,7 +127,7 @@ export default function Sidebar({ onSelectConversation }) {
         `}
       >
         {/* Sticky Header */}
-        <div className="sticky top-0 bg-white z-30 border-b border-gray-300 broder-rounded-xl">
+        <div className="sticky top-0 bg-white z-30 border-b border-gray-300">
           <div className="flex items-center gap-3 px-4 py-3 mt-4">
             <div className="text-lg font-semibold">Customer Conversations</div>
             <button
@@ -178,7 +188,7 @@ export default function Sidebar({ onSelectConversation }) {
                   </div>
 
                   <div className="flex items-center justify-between mt-1">
-                    <div className="text-xs text-gray-500 truncate max-w-[160px]">
+                    <div className="text-xs text-gray-500 truncate max-w-40">
                       {u.lastMessage || "—"}
                     </div>
 

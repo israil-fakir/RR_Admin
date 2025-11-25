@@ -76,7 +76,7 @@ export default function CustomerTopbar() {
   const handleLogout = () => {
     logout();
     toast.success("Logout Successfully");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

@@ -63,7 +63,7 @@ export default function Topbar() {
   const handleLogout = () => {
     logout();
     toast.success("Logout Successfully");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

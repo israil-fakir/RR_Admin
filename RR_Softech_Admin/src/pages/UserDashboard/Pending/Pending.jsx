@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
-import OrderCard from './../../../components/shared/userDashboard/OrderCard';
-import Model from './../Services/Model';
+import OrderCard from "./../../../components/shared/userDashboard/OrderCard";
+import Model from "./../Services/Model";
 import { fetchOrders } from "../../../api/UserDashboard/orders";
-
+import Pagination from "../../../components/shared/userDashboard/Pagination";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
+import ViewAllOrderBtn from "../../../components/shared/userDashboard/ViewAllOrderBtn";
 
 export default function Pending() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 8;
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = orders.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
@@ -17,7 +25,6 @@ export default function Pending() {
     async function loadOrders() {
       try {
         const data = await fetchOrders();
-        // Filter only pending orders (check backend naming: "PENDING" vs "Pending")
         const pending = data.filter((order) => order.status === "PENDING");
         setOrders(pending);
       } catch (error) {
@@ -30,20 +37,38 @@ export default function Pending() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-600">Loading pending orders...</p>;
+    return (
+      <LoadingSpinner
+        variant="fullscreen"
+        size="lg"
+        message="Loading Pending Orders List..."
+      />
+    );
   }
 
   return (
-    <div className="relative bg-[#F5F5F5] min-h-screen">
-      <h1 className="text-[#2563EB] text-2xl font-bold mb-1">Pending Orders</h1>
-      <p className="text-gray-600 mb-6">
-        View and manage all your pending RR Softech orders
-      </p>
+    <div className="relative bg-gray-50 h-full p-8 border border-gray-200 rounded-xl">
+      <div className="bg-white rounded-2xl shadow-x border border-slate-200 p-6 sm:p-8 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-1.5 flex items-center gap-3">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                Pending Orders
+              </span>
+            </h1>
+            <p className="text-slate-600 text-sm">
+              View and manage all your pending RR Softech orders
+            </p>
+          </div>
+
+          <ViewAllOrderBtn />
+        </div>
+      </div>
 
       {/* Pending Order Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-        {orders.length > 0 ? (
-          orders.map((order) => (
+        {currentItems.length > 0 ? (
+          currentItems.map((order) => (
             <OrderCard
               key={order.id}
               order={order}
@@ -55,13 +80,27 @@ export default function Pending() {
         )}
       </div>
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            if (page >= 1 && page <= totalPages) {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        />
+      )}
+
       {/* Modal */}
       {selectedOrder && (
-        <Model 
-        selectedOrder={selectedOrder} 
-        setSelectedOrder={setSelectedOrder}
-        visibleTabs={['Chatting', 'Transaction', 'Milestone','Reviews']}
-         />
+        <Model
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
+          visibleTabs={["Chatting", "Transaction", "Milestone", "Reviews"]}
+        />
       )}
     </div>
   );

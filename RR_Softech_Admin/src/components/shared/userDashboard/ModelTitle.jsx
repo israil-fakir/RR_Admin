@@ -10,7 +10,7 @@ export default function ModelTitle({ selectedService, onClose }) {
   return (
     <div className="p-6 bg-white shadow-sm">
       <div className="flex items-center mb-6">
-        <div className="flex-shrink-0 w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center mr-4">
+        <div className="shrink-0 w-16 h-16 bg-blue-500 rounded-xl flex items-center justify-center mr-4">
           {ServiceIcon ? (
             <ServiceIcon />
           ) : (

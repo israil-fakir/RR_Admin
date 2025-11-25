@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { LogOut, Menu, X } from "lucide-react";
 import { adminMenuItems } from "./../../../utils/admin/adminMenuItems";
-import { toast } from "react-toastify";
-import useAuth, { getStoredTokens } from "../../../hooks/UserDashboard/useAuth";
+import {  } from "react-toastify";
+import  { getStoredTokens } from "../../../hooks/UserDashboard/useAuth";
 import { employeeMenuItems } from "../../../utils/admin/employeeMenuItems";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
-  const { logout } = useAuth();
-  const navigate = useNavigate();
 
   const { role } = getStoredTokens();
 
@@ -62,21 +60,6 @@ export default function Sidebar() {
             );
           })}
         </nav>
-
-        <div>
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              logout();
-              toast.success("Logout Sucessfully");
-              navigate("/login");
-            }}
-            className="flex items-center gap-3 px-8 py-2 rounded-lg text-sm font-medium transition-all mb-16"
-          >
-            <LogOut size={18} />
-            Log Out
-          </button>
-        </div>
 
         {/* Footer */}
         <div className="p-4 text-xs text-center text-blue-200 border-t border-blue-500">

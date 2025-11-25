@@ -30,6 +30,8 @@ import PaymentSuccess from "../pages/UserDashboard/PaymentSuccess/PaymentSuccess
 import ConsultancyRequest from "../pages/employee/ConsultancyRequest/ConsultancyRequest";
 import ConsultancyRequestAdmin from "../pages/admin/ConsultancyRequestAdmin/ConsultancyRequestAdmin";
 import VerifyingTransction from "../components/shared/admin/VerifyingTransction";
+import TransactionDetails from "../pages/admin/Transactions/TransactionDetails";
+import UserDetailsPage from "../pages/admin/UsersManage/UserDetailsPage";
 
 const router = createBrowserRouter([
   // ============================
@@ -39,7 +41,7 @@ const router = createBrowserRouter([
     element: <PublicRoute to="/redirect-by-role" />,
     children: [
       {
-        path: "/login",
+        path: "/",
         element: <AuthModal />,
       },
     ],
@@ -54,7 +56,7 @@ const router = createBrowserRouter([
   // CUSTOMER ROUTES
   // ============================
   {
-    element: <ProtectedRoute role="CUSTOMER" to="/login" />,
+    element: <ProtectedRoute role="CUSTOMER" to="/" />,
     children: [
       {
         path: "/customer",
@@ -80,7 +82,7 @@ const router = createBrowserRouter([
   // EMPLOYEE ROUTES
   // ============================
   {
-    element: <ProtectedRoute role="EMPLOYEE" to="/login" />,
+    element: <ProtectedRoute role="EMPLOYEE" to="/" />,
     children: [
       {
         path: "/employee",
@@ -89,12 +91,12 @@ const router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "services", element: <Services /> },
           { path: "transactions", element: <Transactions /> },
+          { path: "transactions/:id/", element: <TransactionDetails /> },
           { path: "transactions-verify", element: <VerifyingTransction /> },
           { path: "messages", element: <EmployeeMassage /> },
           { path: "feedback", element: <Feedback /> },
           { path: "change-password", element: <ChangePassword /> },
           { path: "consultancy-services", element: <ConsultancyRequest /> },
-
         ],
       },
     ],
@@ -104,7 +106,7 @@ const router = createBrowserRouter([
   // ADMIN ROUTES
   // ============================
   {
-    element: <ProtectedRoute role="OWNER" to="/login" />,
+    element: <ProtectedRoute role="OWNER" to="/" />,
     children: [
       {
         path: "/admin",
@@ -112,11 +114,16 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <Dashboard /> },
           { path: "users-manage", element: <UsersManagement /> },
+          { path: "users-manage/:id/", element: <UserDetailsPage /> },
           { path: "services", element: <Services /> },
           { path: "transactions", element: <Transactions /> },
-          // { path: "analytics", element: <Analytics /> },
+          { path: "transactions/:id/", element: <TransactionDetails /> },
+          { path: "transactions-verify", element: <VerifyingTransction /> },
           { path: "messages", element: <Messages /> },
-          { path: "consultancy-services", element: <ConsultancyRequestAdmin /> },
+          {
+            path: "consultancy-services",
+            element: <ConsultancyRequestAdmin />,
+          },
           { path: "feedback", element: <Feedback /> },
           { path: "settings", element: <Settings /> },
         ],

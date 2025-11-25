@@ -5,6 +5,7 @@ import OrderCard from "../../../components/shared/userDashboard/OrderCard";
 import Pagination from "../../../components/shared/userDashboard/Pagination";
 import AdminModel from "../../../components/shared/admin/AdminModel";
 import { TAB_CONFIG_ADMIN } from "../../../utils/admin/TAB_CONFIG_ADMIN";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
@@ -22,7 +23,7 @@ export default function Orders() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  // Load Orders
+  // Load Orders (initial)
   useEffect(() => {
     async function loadOrders() {
       try {
@@ -43,7 +44,6 @@ export default function Orders() {
   useEffect(() => {
     let updated = [...orders];
 
-    // 1️⃣ Status Filter (case-insensitive)
     if (activeFilter !== "All") {
       updated = updated.filter(
         (item) =>
@@ -52,7 +52,6 @@ export default function Orders() {
       );
     }
 
-    // 2️⃣ Global Search
     if (search.trim() !== "") {
       const keyword = search.toLowerCase();
 
@@ -79,16 +78,24 @@ export default function Orders() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
-
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
 
-  // Modal open
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
   };
 
+  if (loading && !orders.length) {
+    return (
+      <LoadingSpinner
+        variant="fullscreen"
+        size="lg"
+        message="Loading Services..."
+      />
+    );
+  }
+
   return (
-    <div className="p-6 w-full bg-background min-h-screen">
+    <div className="relative bg-gray-50 h-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 border border-gray-200 rounded-xl overflow-x-hidden">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">Orders</h1>
@@ -112,11 +119,10 @@ export default function Orders() {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`md:px-4 px-3 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeFilter === filter
+            className={`md:px-4 px-3 py-2 rounded-xl text-sm font-medium transition-all ${activeFilter === filter
                 ? "bg-gray-300 text-black shadow-sm"
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
-            }`}
+              }`}
           >
             {filter}
           </button>
@@ -124,9 +130,7 @@ export default function Orders() {
       </div>
 
       {/* Content */}
-      {loading ? (
-        <p className="text-gray-500 text-center py-10">Loading orders...</p>
-      ) : currentItems.length > 0 ? (
+      {currentItems.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
             {currentItems.map((order) => (
@@ -155,7 +159,7 @@ export default function Orders() {
         </p>
       )}
 
-      {/* MODAL (FIXED) */}
+      {/* Modal */}
       {selectedOrder && (
         <AdminModel
           selectedOrder={selectedOrder}

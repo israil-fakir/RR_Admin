@@ -17,7 +17,6 @@ export default function RegisterFrom({ setMode }) {
         role: "CUSTOMER",
       };
       await registerUser(payload);
-      setMode('login')
       toast.success("Registration successful! Please log in to continue.");
       setMode("login");
     } catch (err) {

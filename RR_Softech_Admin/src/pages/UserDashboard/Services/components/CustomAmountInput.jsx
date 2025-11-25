@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
 export default function CustomAmountInput({
   initResponse,
@@ -11,9 +11,11 @@ export default function CustomAmountInput({
   error,
   onDisableCustom,
   onClick,
-  loading,
   disabled,
+  loading
 }) {
+
+
   if (initResponse?.payment_type !== "GATEWAY") return null;
 
   const baseAmount = Number(displayAmount || initResponse?.milestone_amount || 0);

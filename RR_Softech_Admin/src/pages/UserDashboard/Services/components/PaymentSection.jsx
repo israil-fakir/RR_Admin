@@ -1,54 +1,41 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { Upload } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import {
   fetchPaymentProvider,
   postIntiPayment,
   postSubmitProof,
 } from "../../../../api/UserDashboard/payment";
-import { Loader2, Upload } from "lucide-react";
-import { toast } from "react-toastify";
-import ProviderSelector from "./ProviderSelector";
+import LoadingSpinner from "../../../../components/common/LoadingSpinner";
+import CustomAmountInput from "./CustomAmountInput";
 import ManualBankInfo from "./ManualBankInfo";
 import ProofModal from "./ProofModal";
-import CustomAmountInput from "./CustomAmountInput";
+import ProviderSelector from "./ProviderSelector";
 
-/**
- * PaymentSection
- *
- * - Hybrid local preview + backend confirmation
- * - When isCustom === true, Pay Now sends the custom amount to backend:
- *     initPayment(selectedProvider, Number(inputAmount))
- * - initPayment will NOT overwrite user-entered custom amount.
- */
 
 export default function PaymentSection({ milestoneId }) {
-  // Providers + selection
   const [providers, setProviders] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState(null);
 
-  // Amounts
   const [inputAmount, setInputAmount] = useState("");
   const [isCustom, setIsCustom] = useState(false);
 
-  // Loading, errors
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [proloading, setProLoading] = useState(false);
 
-  // Init response from backend (initPayment)
   const [initResponse, setInitResponse] = useState(null);
 
-  // Proof modal
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
   const [proofReference, setProofReference] = useState("");
   const [proofSubmitting, setProofSubmitting] = useState(false);
   const [proofsumitstate, setProofsumitstate] = useState(false);
 
-  // Toggle between riskpay / bank UI (kept from your earlier code)
   const [toggle, setToggle] = useState("riskpay");
   const handleToggleChange = (newToggleState) => {
     setToggle(newToggleState);
   };
 
-  // Load providers once
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -77,19 +64,13 @@ export default function PaymentSection({ milestoneId }) {
         provider_code: provider.provider_name_code,
       };
 
-      // Send custom_amount only when explicitly provided
       if (customAmount !== null) {
-        // Ensure it's a string as your backend expects
         payload.custom_amount = String(customAmount);
       }
 
       const response = await postIntiPayment(payload, milestoneId);
-
-      // Save backend response
       setInitResponse(response ?? null);
 
-      // IMPORTANT: only set inputAmount from backend when we didn't send a customAmount.
-      // If customAmount was provided, keep the user's inputAmount intact.
       if (customAmount === null && response?.milestone_amount !== undefined) {
         setInputAmount(String(response.milestone_amount));
       }
@@ -105,19 +86,17 @@ export default function PaymentSection({ milestoneId }) {
     }
   };
 
-  // when selecting a provider: select and init (no custom amount)
   const handleProviderSelect = async (provider) => {
     if (!provider) return;
     setSelectedProvider(provider);
     setIsCustom(false);
     setError("");
     setInitResponse(null);
-
-    // Initialize to get default amounts (milestone_amount etc.)
+    setProLoading(true);
     await initPayment(provider);
+    setProLoading(false);
   };
 
-  // Amount change handler (keeps it simple and safe)
   const handleAmountChange = (e) => {
     setError("");
     const val = e.target.value;
@@ -127,17 +106,14 @@ export default function PaymentSection({ milestoneId }) {
       return;
     }
 
-    // Prevent negative sign
     if (/^-/.test(val)) return;
 
-    // Allow numbers and decimals only
     const num = Number(val);
     if (Number.isNaN(num)) return;
 
     setInputAmount(val);
   };
 
-  // Pay Now (calls initPayment with custom amount if applicable)
   const handlePayNow = async () => {
     setError("");
 
@@ -146,14 +122,12 @@ export default function PaymentSection({ milestoneId }) {
       return;
     }
 
-    // Validate custom amount when custom mode is on
     if (isCustom) {
       if (!inputAmount || Number(inputAmount) <= 0) {
         setError("Enter a valid custom amount.");
         return;
       }
 
-      // optional: validate against provider min/max if available
       const min = selectedProvider?.min_amount
         ? Number(selectedProvider.min_amount)
         : null;
@@ -172,7 +146,6 @@ export default function PaymentSection({ milestoneId }) {
       }
     }
 
-    // Manual payment flow: show instructions rather than redirect
     if (initResponse?.payment_type === "MANUAL") {
       toast.info("Follow the bank instructions and submit your payment proof.");
       return;
@@ -180,7 +153,6 @@ export default function PaymentSection({ milestoneId }) {
 
     setLoading(true);
     try {
-      // If custom, send the custom amount to the backend, otherwise pass null
       const customAmountForApi = isCustom ? Number(inputAmount) : null;
       const res = await initPayment(selectedProvider, customAmountForApi);
 
@@ -189,14 +161,12 @@ export default function PaymentSection({ milestoneId }) {
         return;
       }
 
-      // Open payment_url
       window.open(res.payment_url, "_blank");
     } finally {
       setLoading(false);
     }
   };
 
-  // When custom is disabled, re-init payment (so API-provided default amount is loaded)
   const handleDisableCustom = () => {
     if (selectedProvider) {
       setIsCustom(false);
@@ -204,7 +174,6 @@ export default function PaymentSection({ milestoneId }) {
     }
   };
 
-  // Open proof modal
   const openProofModal = () => {
     if (!initResponse?.transaction_id) {
       setError("Initialize payment first.");
@@ -214,7 +183,6 @@ export default function PaymentSection({ milestoneId }) {
     setIsProofModalOpen(true);
   };
 
-  // Submit proof
   const submitProof = async () => {
     setError("");
     if (!initResponse?.transaction_id) {
@@ -247,7 +215,6 @@ export default function PaymentSection({ milestoneId }) {
   };
 
   const displayAmount = useMemo(() => {
-    // We want a controlled string value for the input
     if (inputAmount === "") return "";
     return inputAmount;
   }, [inputAmount]);
@@ -273,6 +240,7 @@ export default function PaymentSection({ milestoneId }) {
 
       {/* Amount + custom toggle */}
       {toggle === "riskpay" && (
+        <>
         <CustomAmountInput
           initResponse={initResponse}
           selectedProvider={selectedProvider}
@@ -283,9 +251,14 @@ export default function PaymentSection({ milestoneId }) {
           error={error}
           onDisableCustom={handleDisableCustom}
           onClick={handlePayNow}
-          loading={loading}
+          loading = {loading}
           disabled={isPayDisabled()}
         />
+        {proloading && <LoadingSpinner 
+        variant="inline"
+        size="lg"
+        message="Loading Payment..."/>}
+        </>
       )}
 
       {/* Manual Bank Flow */}
@@ -309,6 +282,10 @@ export default function PaymentSection({ milestoneId }) {
           </button>
         </>
       )}
+      {loading && <LoadingSpinner 
+        variant="inline"
+        size="lg"
+        message="Loading Payment..."/>}
 
       {/* Proof Modal */}
       {isProofModalOpen && (

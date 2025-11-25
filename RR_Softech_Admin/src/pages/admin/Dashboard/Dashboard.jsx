@@ -9,6 +9,7 @@ import EmployeeAnalytices from "../../employee/employeeAnalytices/employeeAnalyt
 import { showDashboardAnalytics } from "../../../api/admin/dashboardAnalytics";
 import AdminModel from "../../../components/shared/admin/AdminModel";
 import { TAB_CONFIG_ADMIN } from "../../../utils/admin/TAB_CONFIG_ADMIN";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export default function Dashboard() {
   const [search, setSearch] = useState("");
@@ -91,8 +92,18 @@ export default function Dashboard() {
 
   const handleViewDetails = (order) => setSelectedOrder(order);
 
+    if (loading) {
+      return (
+        <LoadingSpinner
+          variant="fullscreen"
+          size="lg"
+          message="Loading Dashboard..."
+        />
+      );
+    }
+
   return (
-    <div className="p-6">
+    <div className="relative bg-gray-50 h-full px-3 sm:px-6 lg:px-8 py-4 sm:py-6 border border-gray-200 rounded-xl overflow-x-hidden">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>

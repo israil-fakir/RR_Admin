@@ -36,7 +36,7 @@ export default function ForgetPasswordFrom({ setMode }) {
       <CommonForm
         fields={forgetFields}
         submitLabel="Forget Password"
-        onSubmit={handleForgetPassword} // ← Pass form values
+        onSubmit={handleForgetPassword} 
       />
     </>
   );

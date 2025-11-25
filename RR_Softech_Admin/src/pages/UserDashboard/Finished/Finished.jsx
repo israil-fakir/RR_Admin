@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
-import OrderCard from './../../../components/shared/userDashboard/OrderCard';
-import Model from './../Services/Model';
+import OrderCard from "../../../components/shared/userDashboard/OrderCard";
 import { fetchOrders } from "../../../api/UserDashboard/orders";
+import Model from "../Services/Model";
+import ViewAllOrderBtn from "../../../components/shared/userDashboard/ViewAllOrderBtn";
+import Pagination from "../../../components/shared/userDashboard/Pagination";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export default function Finished() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ITEMS_PER_PAGE = 8;
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = orders.slice(startIdx, startIdx + ITEMS_PER_PAGE);
 
   const handleViewDetails = (order) => {
     setSelectedOrder(order);
@@ -16,8 +25,10 @@ export default function Finished() {
     async function loadOrders() {
       try {
         const data = await fetchOrders();
-        // Filter only finished orders (check backend naming: "FINISHED" vs "Finished")
+
+        // Finished = Status: PAID
         const finished = data.filter((order) => order.status === "PAID");
+
         setOrders(finished);
       } catch (error) {
         console.error("Error fetching finished orders:", error);
@@ -29,20 +40,40 @@ export default function Finished() {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-600">Loading finished orders...</p>;
+    return (
+      <LoadingSpinner
+        variant="fullscreen"
+        size="lg"
+        message="Loading Finished Orders List..."
+      />
+    );
   }
 
   return (
-    <div className="relative bg-[#F5F5F5] min-h-screen">
-      <h1 className="text-[#2563EB] text-2xl font-bold mb-1">Finished Orders</h1>
-      <p className="text-gray-600 mb-6">
-        View and manage all your finished RR Softech orders
-      </p>
+    <div className="relative h-full p-8 border border-gray-200 rounded-xl">
 
-      {/* Finished Order Cards */}
+      {/* HEADER */}
+      <div className="bg-white rounded-2xl shadow-x border border-slate-200 p-6 sm:p-8 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-1.5 flex items-center gap-3">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                Finished Orders
+              </span>
+            </h1>
+            <p className="text-slate-600 text-sm">
+              View and manage all your finished RR Softech orders
+            </p>
+          </div>
+
+          <ViewAllOrderBtn />
+        </div>
+      </div>
+
+      {/* ORDER CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
-        {orders.length > 0 ? (
-          orders.map((order) => (
+        {currentItems.length > 0 ? (
+          currentItems.map((order) => (
             <OrderCard
               key={order.id}
               order={order}
@@ -54,13 +85,27 @@ export default function Finished() {
         )}
       </div>
 
-      {/* Modal */}
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            if (page >= 1 && page <= totalPages) {
+              setCurrentPage(page);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+        />
+      )}
+
+      {/* MODAL */}
       {selectedOrder && (
-        <Model 
-        selectedOrder={selectedOrder} 
-        setSelectedOrder={setSelectedOrder}
-        visibleTabs={["Chatting", "Transaction", "Reviews","Feedback"]}
-         />
+        <Model
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
+          visibleTabs={["Chatting", "Transaction", "Reviews", "Feedback"]}
+        />
       )}
     </div>
   );

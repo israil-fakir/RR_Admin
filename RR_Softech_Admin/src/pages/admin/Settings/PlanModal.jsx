@@ -1,4 +1,3 @@
-// src/pages/admin/Settings/PlanModal.jsx
 import React, { useEffect, useState } from "react";
 
 function TextField({ label, name, type = "text", required = false, ...props }) {
@@ -36,14 +35,7 @@ function TextAreaField({ label, name, required = false, ...props }) {
     );
 }
 
-function SelectField({
-    label,
-    name,
-    value,
-    onChange,
-    options,
-    required = false,
-}) {
+function SelectField({ label, name, value, onChange, options, required = false }) {
     return (
         <label className="block text-sm">
             <span className="mb-1 flex items-center gap-1 font-medium text-slate-700">
@@ -68,6 +60,14 @@ function SelectField({
     );
 }
 
+// helper to slugify plan name
+const slugify = (str = "") =>
+    str
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
 export default function PlanModal({
     open,
     onClose,
@@ -76,40 +76,63 @@ export default function PlanModal({
     loading,
     services,
 }) {
-    const [form, setForm] = useState(
-        data || {
-            service: "",
-            name: "",
-            slug: "",
-            description: "",
-            price: "",
-            billing_cycle: "MONTHLY",
-        }
-    );
+    const [form, setForm] = useState({
+        service: "",
+        name: "",
+        slug: "",
+        description: "",
+        price: "",
+        billing_cycle: "MONTHLY",
+    });
+
+    const [slugEdited, setSlugEdited] = useState(false);
 
     useEffect(() => {
-        setForm(
-            data || {
+        if (data) {
+            setForm({
+                service: data.service || "",
+                name: data.name || "",
+                slug: data.slug || "",
+                description: data.description || "",
+                price: data.price || "",
+                billing_cycle: data.billing_cycle || "MONTHLY",
+            });
+        } else {
+            setForm({
                 service: "",
                 name: "",
                 slug: "",
                 description: "",
                 price: "",
                 billing_cycle: "MONTHLY",
-            }
-        );
+            });
+        }
+        setSlugEdited(false);
     }, [data, open]);
 
     if (!open) return null;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+
+        if (name === "slug") {
+            setSlugEdited(true);
+            setForm((prev) => ({ ...prev, slug: value }));
+            return;
+        }
+
+        setForm((prev) => {
+            const updated = { ...prev, [name]: value };
+            if (name === "name" && !slugEdited) {
+                updated.slug = slugify(value);
+            }
+            return updated;
+        });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(form);
+        onSave(form); // description is the multi-line features string
     };
 
     const serviceOptions = (services || []).map((s) => ({
@@ -165,7 +188,7 @@ export default function PlanModal({
                                 value={form.name || ""}
                                 onChange={handleChange}
                                 required
-                                placeholder="e.g. Basic, Pro, Enterprise"
+                                placeholder="e.g. Lite, Pro, Growth Plus"
                             />
                             <TextField
                                 label="Slug"
@@ -173,18 +196,26 @@ export default function PlanModal({
                                 value={form.slug || ""}
                                 onChange={handleChange}
                                 required
-                                placeholder="e.g. basic, pro, enterprise"
+                                placeholder="auto-generated-from-name"
                             />
                         </div>
 
-                        {/* Description */}
+                        {/* Description = one feature per line */}
                         <TextAreaField
-                            label="Description"
+                            label="Description / Features"
                             name="description"
-                            rows={3}
+                            rows={6}
                             value={form.description || ""}
                             onChange={handleChange}
+                            required
+                            placeholder={
+                                "3 Designs per month\nLogo design\nJPG, PNG formats\n3–5 days turnaround\nEmail support"
+                            }
                         />
+                        <p className="text-xs text-slate-500">
+                            Write <span className="font-semibold">one feature per line</span>.
+                            Each line will be shown with a green check icon on the plan card.
+                        </p>
 
                         {/* Price + billing */}
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -192,12 +223,14 @@ export default function PlanModal({
                                 label="Price"
                                 name="price"
                                 type="number"
+                                min="0"
                                 step="0.01"
                                 value={form.price || ""}
                                 onChange={handleChange}
                                 required
-                                placeholder="e.g. 199"
+                                placeholder="e.g. 699"
                             />
+
                             <SelectField
                                 label="Billing cycle"
                                 name="billing_cycle"

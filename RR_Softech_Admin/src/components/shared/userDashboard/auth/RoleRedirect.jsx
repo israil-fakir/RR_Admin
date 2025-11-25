@@ -7,7 +7,7 @@ export default function RoleRedirect() {
 
   // if (loading) return null;
 
-  if (!auth?.access) return <Navigate to="/login" />;
+  if (!auth?.access) return <Navigate to="/" />;
 
   const role = auth.role;
 

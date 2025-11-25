@@ -4,7 +4,7 @@ import RegisterFrom from "./RegisterFrom";
 import LoginFrom from "./LoginFrom";
 import ForgetPasswordFrom from "./ForgetPasswordFrom";
 
-export default function AuthModal({role}) {
+export default function AuthModal() {
   const [mode, setMode] = useState("login");
   motion;
   return (
@@ -50,9 +50,9 @@ export default function AuthModal({role}) {
         </div>
 
         <div>
-          {mode === "register" && <RegisterFrom setMode={setMode} role={role} />}
+          {mode === "register" && <RegisterFrom setMode={setMode} />}
 
-          {mode === "login" && <LoginFrom setMode={setMode} role={role}  />}
+          {mode === "login" && <LoginFrom setMode={setMode}   />}
 
           {mode === "forgetPassword" && (
             <ForgetPasswordFrom setMode={setMode} />

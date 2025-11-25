@@ -56,7 +56,7 @@ export default function Milestone({milestoneData,loading,setActiveTab,onSelectMi
                 className="border-b hover:bg-gray-50 transition-colors"
               >
                 <td className="p-3 flex items-center space-x-2">
-                  <span>{m.title}</span>
+                  <span>{m.title} {m.id}</span>
                 </td>
                 <td className="p-3 text-gray-700">${m.amount}</td>
                 <td className="p-3 text-gray-700 flex items-center space-x-2">

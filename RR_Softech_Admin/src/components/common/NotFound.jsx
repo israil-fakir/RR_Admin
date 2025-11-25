@@ -30,7 +30,7 @@ export default function NotFound() {
             <Home className="w-4 h-4 mr-2" /> Back to Dashboard
           </Link>
           <Link
-            to="/services"
+            to="/customer/services"
             className="inline-flex items-center px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
           >
             Go to Services

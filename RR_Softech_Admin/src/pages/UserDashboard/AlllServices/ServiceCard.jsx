@@ -5,12 +5,33 @@ export default function ServiceCard({ service, onViewPlans }) {
   const planCount = service.plans?.length || 0;
 
   return (
-    <article className="h-full flex flex-col bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 overflow-hidden">
-      {/* Content */}
-      <div className="flex-1 p-4 sm:p-6 lg:p-8 flex flex-col">
-        {/* Service Name + badge */}
+    <article
+      className="
+        group
+        w-full h-full
+        flex flex-col
+        bg-white
+        rounded-2xl
+        shadow-lg hover:shadow-2xl
+        border border-gray-100
+        overflow-hidden
+        transition-all duration-300
+      "
+    >
+      {/* content */}
+      <div className="flex-1 flex flex-col p-4 sm:p-5 lg:p-6">
+        {/* title and badge */}
         <div className="flex items-start justify-between gap-3 mb-4">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          <h3
+            className="
+              text-base sm:text-lg lg:text-xl
+              font-bold
+              text-gray-900
+              group-hover:text-blue-600
+              transition-colors
+              wrap-break-words
+            "
+          >
             {service.name}
           </h3>
 
@@ -22,18 +43,32 @@ export default function ServiceCard({ service, onViewPlans }) {
           </div>
         </div>
 
-        {/* Description */}
+        {/* description */}
         <div className="mb-4 flex-1">
           <ServiceDescription text={service.description} />
         </div>
 
-        {/* CTA Button */}
+        {/* CTA button */}
         <button
           onClick={() => onViewPlans(service)}
-          className="w-full bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white mt-auto py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl"
+          className="
+            w-full
+            mt-auto
+            py-2.5 sm:py-3
+            px-4 sm:px-5
+            rounded-xl
+            font-semibold
+            text-sm sm:text-base
+            flex items-center justify-center gap-2
+            bg-linear-to-r from-blue-600 to-blue-700
+            hover:from-blue-700 hover:to-blue-800
+            text-white
+            shadow-md hover:shadow-xl
+            transition-all duration-300
+          "
         >
           <span>View Plans &amp; Details</span>
-          <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transform group-hover:translate-x-1 transition-transform" />
         </button>
       </div>
     </article>
