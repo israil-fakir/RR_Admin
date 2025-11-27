@@ -1,110 +1,105 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 
 export default function ProviderSelector({
-  providers,
+  providers = [],
+  loading = false,
   selectedProvider,
-  handleProviderSelect,
-  onToggle
+  onSelect,
+  toggle,
+  onToggle,
 }) {
-  const [activeTab, setActiveTab] = useState("riskpay");
+  // Normalize type matching
+  const bankProviders = useMemo(() => {
+    return providers.filter(
+      (p) => (p.type || "").toUpperCase() === "BANK_TRANSFER"
+    );
+  }, [providers]);
 
-  const filteredProviders = providers.filter((p) =>
-    activeTab === "bank"
-      ? p.provider_name_code === "bank"
-      : p.provider_name_code !== "bank"
-  );
+  const otherProviders = useMemo(() => {
+    return providers.filter(
+      (p) => (p.type || "").toUpperCase() !== "BANK_TRANSFER"
+    );
+  }, [providers]);
 
-  const handleToggle = (value) => {
-    setActiveTab(value);
-    onToggle(value);
-  };
+  const listToRender = toggle === "bank" ? bankProviders : otherProviders;
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="w-full bg-gray-100 p-2 rounded-xl">
-        <div className="flex w-full gap-2">
+    <div className="w-full bg-white p-3 rounded-lg border border-gray-200">
+      {/* Tabs */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => handleToggle("riskpay")}
-            className={`
-        w-1/2 py-3 text-sm font-semibold rounded-lg border 
-        transition-all duration-300 ease-in-out
-        ${
-          activeTab === "riskpay"
-            ? "bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]"
-            : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50"
-        }
-      `}
+            onClick={() => onToggle("riskpay")}
+            className={`px-3 py-1 rounded-md text-sm ${
+              toggle === "riskpay"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
           >
-            RiskPay Payment
+            Riskpay
           </button>
           <button
             type="button"
-            onClick={() => handleToggle("bank")}
-            className={`
-        w-1/2 py-3 text-sm font-semibold rounded-lg border 
-        transition-all duration-300 ease-in-out
-        ${
-          activeTab === "bank"
-            ? "bg-blue-600 text-white border-blue-600 shadow-md scale-[1.02]"
-            : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50"
-        }
-      `}
+            onClick={() => onToggle("bank")}
+            className={`px-3 py-1 rounded-md text-sm ${
+              toggle === "bank"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+            }`}
           >
-            Bank Payment
+            Bank
           </button>
+        </div>
+
+        <div className="text-sm text-gray-500">
+          {loading ? "Loading providers..." : `${listToRender.length} providers`}
         </div>
       </div>
 
-      {/* ------------------ Providers List ------------------ */}
-      <div className="flex flex-col gap-3">
-        <label className="text-sm text-gray-600 font-medium text-center">
-          Select Payment Provider
-        </label>
+      {/* Provider List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {listToRender.map((p) => {
+          const active =
+            selectedProvider?.provider_name_code === p.provider_name_code; // FIXED
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {filteredProviders.length === 0 && (
-            <p className="text-gray-500 text-sm">No providers available.</p>
-          )}
+          return (
+            <button
+              key={p.provider_name_code} // FIXED
+              onClick={() => onSelect(p)} // FIXED: Send full provider object
+              className={`flex items-center gap-3 w-full text-left p-3 rounded-lg border transition ${
+                active
+                  ? "bg-blue-50 border-blue-200"
+                  : "bg-white border-gray-100 hover:bg-gray-50"
+              }`}
+            >
+              <img
+                src={p.logo}
+                alt={p.title}
+                className="h-8 w-8 object-contain"
+              />
 
-          {filteredProviders.map((p) => {
-            const active = selectedProvider?.id === p.id;
-
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => handleProviderSelect(p)}
-                className={`flex items-center gap-3 p-3 border rounded-lg w-full text-left 
-                  transition-all duration-200
-                  ${
-                    active
-                      ? "border-blue-600 bg-blue-50 shadow-sm"
-                      : "border-gray-300 hover:bg-gray-50"
-                  }`}
-              >
-                <img
-                  src={p.logo}
-                  alt={p.title}
-                  className="w-10 h-10 object-contain"
-                />
-
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-800">{p.title}</p>
-                  <p className="text-xs text-gray-500">
-                    Min ${p.min_amount} — Max ${p.max_amount}
-                  </p>
+              <div className="flex-1">
+                <div className="text-sm font-medium text-gray-800">
+                  {p.title}
                 </div>
+                <div className="text-xs text-gray-500">
+                  Min: {p.min_amount} — Max: {p.max_amount}
+                </div>
+              </div>
 
-                {active && (
-                  <div className="text-xs text-blue-600 font-medium">
-                    Selected
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
+              <div className="text-xs text-gray-500">
+                {(p.type || "").toUpperCase()}
+              </div>
+            </button>
+          );
+        })}
+
+        {listToRender.length === 0 && !loading && (
+          <div className="col-span-full text-sm text-gray-500">
+            No providers available in this category.
+          </div>
+        )}
       </div>
     </div>
   );

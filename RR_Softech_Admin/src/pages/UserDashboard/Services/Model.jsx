@@ -16,10 +16,10 @@ export default function Model({
   setSelectedOrder,
   visibleTabs,
 }) {
-  const [ordersData, setOrdersData] = useState(null); 
+  const [ordersData, setOrdersData] = useState(null);
   const [loading, setLoading] = useState(true);
-   const [selectedMilestoneId, setSelectedMilestoneId] = useState(null);
-
+  const [selectedMilestoneId, setSelectedMilestoneId] = useState(null);
+  
 
   const handleMilestoneSelect = (id) => {
     setSelectedMilestoneId(id);
@@ -30,8 +30,9 @@ export default function Model({
       ? tabs.filter((t) => visibleTabs.includes(t.value))
       : tabs;
 
-    const [activeTab, setActiveTab] = useState(
-    effectiveTabs[0]?.value ?? "Chatting");
+  const [activeTab, setActiveTab] = useState(
+    effectiveTabs[0]?.value ?? "Chatting"
+  );
 
   const closeModal = () => {
     setSelectedOrder(null);
@@ -58,6 +59,20 @@ export default function Model({
   useEffect(() => {
     setActiveTab(effectiveTabs[0]?.value ?? "Chatting");
   }, [selectedOrder, visibleTabs]);
+
+  const [milestoneData,setMilestoneData] = useState();
+
+useEffect(() => {
+  const milestoneData = ordersData?.milestones;
+
+  if (Array.isArray(milestoneData)) {
+    milestoneData.forEach((m) => {
+      setMilestoneData(m)
+    });
+  }
+}, [ordersData]);
+
+  
 
   return (
     <RightSideModal
@@ -102,7 +117,13 @@ export default function Model({
                 />
               )}
 
-              {selectedMilestoneId && activeTab  === "Payment" && <PaymentSection milestoneData={ordersData?.milestones || []} milestoneId={selectedMilestoneId} />}
+              {selectedMilestoneId && activeTab === "Payment" && (
+                <PaymentSection
+                  milestoneData={milestoneData || []}
+                  milestoneId={selectedMilestoneId}
+                  
+                />
+              )}
 
               {activeTab === "Feedback" && (
                 <FeedbackSection productId={ordersData?.id} />
@@ -110,7 +131,7 @@ export default function Model({
 
               {activeTab === "Milestone" && (
                 <Milestone
-                  setActiveTab = {setActiveTab}
+                  setActiveTab={setActiveTab}
                   milestoneData={ordersData?.milestones || []}
                   loading={loading}
                   onSelectMilestone={handleMilestoneSelect}

@@ -80,7 +80,7 @@ export default function OrderCard({
   onViewDetails,
   viewMode = "grid",
 }) {
-  const { id, plan_details, status, created_at, plan_price } = order;
+  const { plan_details, status, created_at, plan_price } = order;
 
   const formattedDate = new Date(created_at).toLocaleDateString("en-GB", {
     year: "numeric",
@@ -103,7 +103,7 @@ export default function OrderCard({
                 <Icon className="text-blue-600 w-5 h-5" strokeWidth={2} />
               </div>
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-2">
-                {plan_details || "Product Details here"} {id}
+                {plan_details || "Product Details here"}
               </h3>
             </div>
 
@@ -137,14 +137,14 @@ export default function OrderCard({
           </div>
         ) : (
           /* ========== GRID VIEW ========== */
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col h-[100px] gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-3.5 flex-1 min-w-0">
               <div className="p-2.5 rounded-lg bg-blue-50 mt-0.5 shrink-0">
                 <Icon className="text-blue-600 w-5 h-5" strokeWidth={2} />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1.5 line-clamp-2">
-                  {plan_details || "Product Details here"} {id}
+                  {plan_details || "Product Details here"}
                 </h3>
                 <p className="text-lg font-bold text-gray-900 mb-1.5">
                   ${plan_price || 0}

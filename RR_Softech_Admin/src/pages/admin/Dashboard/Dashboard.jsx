@@ -11,7 +11,7 @@ import AdminModel from "../../../components/shared/admin/AdminModel";
 import { TAB_CONFIG_ADMIN } from "../../../utils/admin/TAB_CONFIG_ADMIN";
 import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
-export default function Dashboard() {
+export default function Dashboard({header= 'Admin Dashboard Overview',subtitle = "Monitor all activities and performance metrics in one place."}) {
   const [search, setSearch] = useState("");
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState(""); // NEW STATE
@@ -108,10 +108,10 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">
-            Admin Dashboard Overview
+            {header}
           </h1>
           <p className="text-gray-500 text-sm">
-            Monitor all activities and performance metrics in one place.
+            {subtitle}
           </p>
         </div>
 

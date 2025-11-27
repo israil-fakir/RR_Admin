@@ -54,9 +54,6 @@ export default function EmployeeAnalytices() {
         <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">
           Schedule Statistics
         </h1>
-        <p className="text-xs sm:text-sm text-gray-500">
-          Overview of your recent schedule activity
-        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">

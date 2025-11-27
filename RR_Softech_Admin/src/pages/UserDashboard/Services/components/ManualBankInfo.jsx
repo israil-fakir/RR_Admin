@@ -1,5 +1,4 @@
-import { CreditCard } from "lucide-react";
-
+import { CreditCard, CheckCircle } from "lucide-react";
 
 export default function ManualBankInfo({ data = {} }) {
   const status = data.proof_submission_status ?? null;
@@ -12,18 +11,29 @@ export default function ManualBankInfo({ data = {} }) {
             <CreditCard className="h-5 w-5 text-blue-600" />
           </div>
           <div>
-            <div className="text-sm font-semibold text-gray-800">Bank / Manual Payment</div>
-            <div className="mt-1 text-xs text-gray-600">{data.message}</div>
+            <div className="text-sm font-semibold text-gray-800">
+              Bank / Manual Payment
+            </div>
+            {data.message && (
+              <div className="mt-1 text-xs text-gray-600">{data.message}</div>
+            )}
           </div>
         </div>
 
         <div className="text-right">
           <div className="text-xs text-gray-500">Transaction</div>
-          <div className="text-sm font-mono font-semibold text-gray-800">#{data.transaction_id}</div>
+          <div className="text-sm font-mono font-semibold text-gray-800">
+            #{data.transaction_id}
+          </div>
+
           <div className="mt-2">
             {status === "VERIFYING" && (
               <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs bg-yellow-50 text-yellow-800 border border-yellow-100">
-                <svg className="h-3 w-3 animate-pulse" viewBox="0 0 8 8" fill="currentColor">
+                <svg
+                  className="h-3 w-3 animate-pulse"
+                  viewBox="0 0 8 8"
+                  fill="currentColor"
+                >
                   <circle cx="4" cy="4" r="4" />
                 </svg>
                 <span>VERIFYING</span>
@@ -47,21 +57,33 @@ export default function ManualBankInfo({ data = {} }) {
       </div>
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Bank Details */}
         <div className="bg-white p-3 rounded-md border border-gray-100">
           <div className="text-xs text-gray-500">Bank Details</div>
-          <div className="mt-2 text-sm font-medium text-gray-800 break-words">{data.bank_details}</div>
+          <div className="mt-2 text-sm font-medium text-gray-800 break-words">
+            {data.bank_details}
+          </div>
         </div>
 
+        {/* Amount Details */}
         <div className="bg-white p-3 rounded-md border border-gray-100">
           <div className="text-xs text-gray-500">Amount</div>
           <div className="mt-2 text-sm font-medium text-gray-800">
-            ${data.milestone_amount} <span className="text-xs text-gray-500">+ ${data.processing_fee} fee</span>
-            <div className="mt-2 text-base font-semibold">${data.final_charge_amount}</div>
+            ${data.milestone_amount}{" "}
+            <span className="text-xs text-gray-500">
+              + ${data.processing_fee} fee
+            </span>
+          </div>
+          <div className="mt-2 text-base font-semibold">
+            ${data.final_charge_amount}
           </div>
         </div>
       </div>
 
-      <div className="mt-4 text-sm text-gray-600">{data.message}</div>
+      {/* Optional message */}
+      {data.message && (
+        <div className="mt-4 text-sm text-gray-600">{data.message}</div>
+      )}
     </div>
   );
 }

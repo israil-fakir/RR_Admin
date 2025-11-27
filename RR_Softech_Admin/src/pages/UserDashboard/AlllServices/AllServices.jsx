@@ -45,13 +45,13 @@ export default function AllServices() {
   }
 
   return (
-    <section className="relative h-full w-full px-3 pb-6 sm:px-5 lg:px-8">
-      {/* header card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-4 py-4 sm:px-6 sm:py-5 mb-5">
+    <section className="relative h-full p-8 border border-gray-200 rounded-xl">
+      <div className="bg-white rounded-2xl shadow-x border border-slate-200 p-6 sm:p-8 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Title Section */}
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1.5 flex items-center gap-3">
-              <span className="bg-linear-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-slate-900 mb-1.5 flex items-center gap-3">
+              <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
                 Our Services
               </span>
             </h1>
@@ -64,8 +64,8 @@ export default function AllServices() {
         </div>
       </div>
 
-      {/* services list */}
-      <div className="w-full max-w-xl sm:max-w-2xl lg:max-w-5xl mx-auto grid gap-4 sm:gap-5 lg:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      {/* SERVICES GRID */}
+      <div className="grid gap-6 sm:gap-7 lg:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {currentItems.map((service) => (
           <ServiceCard
             key={service.id}
@@ -75,7 +75,7 @@ export default function AllServices() {
         ))}
       </div>
 
-      {/* pagination */}
+      {/* PAGINATION */}
       {totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
@@ -89,7 +89,7 @@ export default function AllServices() {
         />
       )}
 
-      {/* modal */}
+      {/* MODAL */}
       <ServiceDetailsModal
         isOpen={!!selectedService}
         service={selectedService}
