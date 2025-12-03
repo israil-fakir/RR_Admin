@@ -24,4 +24,10 @@ export async function updatePaymentStatus(id,payload) {
   const res = await apiClient.post(`transactions/${id}/approve_transfer/`,payload);
   return res.data;
 }
+export async function getSession(payload,id) {
+  const res = await apiClient.post(`milestones/${id}/initiate_payment/`,payload);
+  return res.data;
+}
+
+
 

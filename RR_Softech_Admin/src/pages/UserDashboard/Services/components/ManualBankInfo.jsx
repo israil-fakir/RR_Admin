@@ -1,11 +1,48 @@
 import { CreditCard, CheckCircle } from "lucide-react";
+import { toast } from "react-toastify";
+import { postIntiPayment } from "../../../../api/UserDashboard/payment";
+import { useEffect, useState } from "react";
 
-export default function ManualBankInfo({ data = {} }) {
-  const status = data.proof_submission_status ?? null;
+export default function ManualBankInfo({ data = {}, milestoneId }) {
+  const [info, setInfo] = useState(null);
+
+  // Fetch backend payment initialization whenever provider changes
+  async function fetchBank(milestoneId) {
+    try {
+      const payload = {
+        provider_code: data.provider_name_code,
+      };
+
+      const res = await postIntiPayment(payload, milestoneId);
+
+      if (!res) {
+        toast.error("Payment initialization failed.");
+        return;
+      }
+
+      setInfo(res);
+    } catch (err) {
+      console.error("postIntiPayment", err);
+      toast.error("Failed to initialize payment.");
+    }
+  }
+
+  // Re-run INIT when provider or milestone changes
+  useEffect(() => {
+    if (data?.provider_name_code && milestoneId) {
+      fetchBank(milestoneId);
+    }
+  }, [data.provider_name_code, milestoneId]);
+
+  // Do not render until info is loaded
+  if (!info) return null;
+
+  const status = info.proof_submission_status ?? null;
 
   return (
     <div className="w-full bg-gradient-to-tr from-white to-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
       <div className="flex items-start justify-between gap-4">
+        {/* Header */}
         <div className="flex items-start gap-3">
           <div className="p-3 rounded-md bg-blue-50">
             <CreditCard className="h-5 w-5 text-blue-600" />
@@ -14,19 +51,21 @@ export default function ManualBankInfo({ data = {} }) {
             <div className="text-sm font-semibold text-gray-800">
               Bank / Manual Payment
             </div>
-            {data.message && (
-              <div className="mt-1 text-xs text-gray-600">{data.message}</div>
+            {info.message && (
+              <div className="mt-1 text-xs text-gray-600">{info.message}</div>
             )}
           </div>
         </div>
 
+        {/* Right Side Status Info */}
         <div className="text-right">
           <div className="text-xs text-gray-500">Transaction</div>
           <div className="text-sm font-mono font-semibold text-gray-800">
-            #{data.transaction_id}
+            #{info.transaction_id}
           </div>
 
           <div className="mt-2">
+            {/* Status Badge */}
             {status === "VERIFYING" && (
               <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full text-xs bg-yellow-50 text-yellow-800 border border-yellow-100">
                 <svg
@@ -56,33 +95,44 @@ export default function ManualBankInfo({ data = {} }) {
         </div>
       </div>
 
+      {/* Main Payment Details */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Bank Details */}
+        
+        {/* Bank Details from Provider */}
         <div className="bg-white p-3 rounded-md border border-gray-100">
           <div className="text-xs text-gray-500">Bank Details</div>
           <div className="mt-2 text-sm font-medium text-gray-800 break-words">
-            {data.bank_details}
+            {info.bank_details || data.bank_details}
           </div>
+
+          {/* Provider Extra Details */}
+          {data.account_number && (
+            <div className="mt-1 text-xs text-gray-600">
+              Account Number: {data.account_number}
+            </div>
+          )}
         </div>
 
-        {/* Amount Details */}
+        {/* Amount Details (from INIT response) */}
         <div className="bg-white p-3 rounded-md border border-gray-100">
           <div className="text-xs text-gray-500">Amount</div>
           <div className="mt-2 text-sm font-medium text-gray-800">
-            ${data.milestone_amount}{" "}
+            ${info.milestone_amount}
             <span className="text-xs text-gray-500">
-              + ${data.processing_fee} fee
+              {" "}
+              + ${info.processing_fee} fee 
             </span>
           </div>
+
           <div className="mt-2 text-base font-semibold">
-            ${data.final_charge_amount}
+            ${info.final_charge_amount}
           </div>
         </div>
       </div>
 
-      {/* Optional message */}
-      {data.message && (
-        <div className="mt-4 text-sm text-gray-600">{data.message}</div>
+      {/* Optional backend message */}
+      {info.message && (
+        <div className="mt-4 text-sm text-gray-600">{info.message}</div>
       )}
     </div>
   );

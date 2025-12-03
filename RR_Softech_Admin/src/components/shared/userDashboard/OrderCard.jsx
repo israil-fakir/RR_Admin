@@ -110,7 +110,7 @@ export default function OrderCard({
             {/* RIGHT: amount + date + status + eye */}
             <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 sm:gap-3 text-sm">
               <p className="text-base sm:text-lg font-bold text-gray-900">
-                ${plan_price || 0}
+                ${plan_price || 0} 
               </p>
 
               <div className="flex items-center gap-1.5 text-gray-500">
