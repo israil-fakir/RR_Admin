@@ -82,7 +82,7 @@ const LoadingSpinner = ({
   // Variant: Fullscreen Loading
   if (variant === "fullscreen") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center border border-gray-200  rounded-xl ">
+      <div className="h-[815px] bg-gray-50 flex items-center justify-center border border-gray-200  rounded-xl ">
         <div className={`bg-white rounded-2xl shadow-xl ${currentSize.container} flex flex-col items-center space-y-4`}>
           <Spinner />
           <p className={`${currentColor.text} font-medium ${currentSize.text}`}>{message}</p>

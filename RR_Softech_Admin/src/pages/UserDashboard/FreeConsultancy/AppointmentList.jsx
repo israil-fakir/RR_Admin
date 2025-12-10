@@ -176,7 +176,7 @@ export default function AppointmentList({ showAppointments }) {
                       onClick={() =>
                         window.open(item.meeting_link, "_blank", "noopener")
                       }
-                      className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-white font-medium transition 
+                      className={`w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 rounded-lg text-white font-medium transition 
                         ${
                           item.meeting_link
                             ? "bg-blue-600 hover:bg-blue-700"

@@ -50,7 +50,7 @@ export default function FAQsTab({ plans }) {
               {/* Question Button */}
               <button
                 onClick={() => toggleFAQ(faq.id)}
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 <div className="flex-1">
                   <h4 className="font-semibold text-gray-900 mb-1">

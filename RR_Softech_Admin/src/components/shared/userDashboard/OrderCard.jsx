@@ -170,7 +170,7 @@ export default function OrderCard({
         <div className="px-5 pb-5">
           <button
             onClick={onViewDetails}
-            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors duration-200"
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 px-4 rounded-lg transition-colors duration-200 cursor-pointer"
           >
             <Eye size={16} strokeWidth={2} />
             <span>View Details</span>

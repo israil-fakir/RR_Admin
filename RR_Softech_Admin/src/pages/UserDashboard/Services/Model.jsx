@@ -10,6 +10,7 @@ import { getButtonClass } from "../../../utils/UserDashboard/services/getButtonC
 import { tabs } from "../../../utils/UserDashboard/services/tabsItems";
 import ReviewList from "./components/ReviewList";
 import { fetchOrdersById } from "../../../api/UserDashboard/orders";
+import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export default function Model({
   selectedOrder,
@@ -19,7 +20,6 @@ export default function Model({
   const [ordersData, setOrdersData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedMilestoneId, setSelectedMilestoneId] = useState(null);
-  
 
   const handleMilestoneSelect = (id) => {
     setSelectedMilestoneId(id);
@@ -60,19 +60,17 @@ export default function Model({
     setActiveTab(effectiveTabs[0]?.value ?? "Chatting");
   }, [selectedOrder, visibleTabs]);
 
-  const [milestoneData,setMilestoneData] = useState();
+  const [milestoneData, setMilestoneData] = useState();
 
-useEffect(() => {
-  const milestoneData = ordersData?.milestones;
+  useEffect(() => {
+    const milestoneData = ordersData?.milestones;
 
-  if (Array.isArray(milestoneData)) {
-    milestoneData.forEach((m) => {
-      setMilestoneData(m)
-    });
-  }
-}, [ordersData]);
-
-  
+    if (Array.isArray(milestoneData)) {
+      milestoneData.forEach((m) => {
+        setMilestoneData(m);
+      });
+    }
+  }, [ordersData]);
 
   return (
     <RightSideModal
@@ -95,9 +93,11 @@ useEffect(() => {
           </div>
 
           {loading && (
-            <div className="mt-6 text-gray-500 text-sm">
-              Loading order details...
-            </div>
+            <LoadingSpinner
+              variant="fullscreen"
+              size="md"
+              message="Loading Orders List..."
+            />
           )}
 
           {!loading && ordersData && (
@@ -121,7 +121,7 @@ useEffect(() => {
                 <PaymentSection
                   milestoneData={milestoneData || []}
                   milestoneId={selectedMilestoneId}
-                  
+                  setActiveTab={setActiveTab}
                 />
               )}
 

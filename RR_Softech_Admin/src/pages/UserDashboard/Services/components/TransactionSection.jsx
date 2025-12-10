@@ -1,10 +1,11 @@
+import LoadingSpinner from "../../../../components/common/LoadingSpinner";
 import DateTime from "../../../../utils/UserDashboard/services/DateTime";
 import { statusColors } from "../../../../utils/UserDashboard/services/statusColors";
 
 export default function TransactionSection({ transactionData, loading }) {
 
   if (loading) {
-    return <p className="text-gray-600">Loading your Transactions...</p>;
+    return <LoadingSpinner  message = "Loading your Transactions..." size="sm" variant="inline"/>;
   }
 
   return (

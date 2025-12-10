@@ -1,6 +1,7 @@
 import { Clock, FileText, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { statusColors } from "../../../../utils/UserDashboard/services/statusColors";
+import LoadingSpinner from "../../../../components/common/LoadingSpinner";
 
 
 export default function Milestone({milestoneData,loading,setActiveTab,onSelectMilestone }) {
@@ -12,7 +13,9 @@ export default function Milestone({milestoneData,loading,setActiveTab,onSelectMi
     setMilestones(milestoneData);
   },[milestoneData])
 
-  if(loading) `<p>Miletone are loading...</p>`
+   if (loading) {
+      return <LoadingSpinner  message = "Milestones are loading..." size="sm" variant="inline"/>;
+    }
   
   const handlePayNow = (id) => {
     const milestone = milestones.find((m) => m.id === id);
@@ -23,8 +26,7 @@ export default function Milestone({milestoneData,loading,setActiveTab,onSelectMi
       console.error("Milestone not found!");
       return;
     }
-    alert(`Processing payment for: ${milestone.title} ($${milestone.amount})`);
-    setActiveTab("Payment")
+    setActiveTab("Payment");
   };
   return (
     <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200">
@@ -78,7 +80,7 @@ export default function Milestone({milestoneData,loading,setActiveTab,onSelectMi
                 <td className="">
                   <button
                     onClick={() => handlePayNow(m.id)}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center gap-2 mx-auto ${
+                    className={`bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-all duration-300 shadow-sm flex items-center justify-center gap-2 mx-auto cursor-pointer ${
                       m.status === "PAID" ? "hidden" : m.status
                     }`}
                   >

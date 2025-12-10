@@ -126,7 +126,6 @@ export default function Transactions() {
     navigate(`/${base}/transactions/${item.id}/`, { state: { item } });
   };
 
-  // Fullscreen loader for the initial fetch
   if (loading && !transactions.length) {
     return (
       <LoadingSpinner

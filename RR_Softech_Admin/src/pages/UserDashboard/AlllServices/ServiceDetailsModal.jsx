@@ -81,7 +81,7 @@ motion
                     return (
                       <button
                         key={tab.value}
-                        className={getButtonClass(tab.value)}
+                        className={`${getButtonClass(tab.value)} cursor-pointer`}
                         onClick={() => setActiveTab(tab.value)}
                       >
                         <Icon className="h-4 w-4" />

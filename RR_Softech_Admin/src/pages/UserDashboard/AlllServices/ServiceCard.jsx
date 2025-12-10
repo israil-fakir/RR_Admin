@@ -65,6 +65,7 @@ export default function ServiceCard({ service, onViewPlans }) {
             text-white
             shadow-md hover:shadow-xl
             transition-all duration-300
+            cursor-pointer
           "
         >
           <span>View Plans &amp; Details</span>

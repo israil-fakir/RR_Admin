@@ -90,7 +90,7 @@ export default function FreeConsultancy() {
 
           <button
             onClick={() => setOpenModal(true)}
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow hover:bg-blue-700 transition"
+            className="bg-blue-600 text-white px-5 py-2.5 rounded-lg shadow hover:bg-blue-700 transition cursor-pointer"
           >
             Book Free Consultancy
           </button>

@@ -12,8 +12,6 @@ export default function PlanCard({ plan }) {
 
     try {
       setLoading(true);
-      alert("Are you sure you want to place this order?");
-
       await postOrders({ plan: planId });
       toast.success("Order placed successfully.");
     } catch (error) {
@@ -121,7 +119,7 @@ export default function PlanCard({ plan }) {
 
         {/* Order Button */}
         <button
-          className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl ${isPopular
+          className={`w-full py-3.5 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md hover:shadow-xl cursor-pointer ${isPopular
             ? "bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             : "bg-gray-900 hover:bg-gray-800 text-white"
             }`}

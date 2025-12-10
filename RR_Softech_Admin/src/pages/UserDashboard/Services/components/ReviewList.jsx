@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Star } from "lucide-react";
 import { fetchReviews } from "../../../../api/UserDashboard/reviews";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../../../components/common/LoadingSpinner";
 
 export default function ReviewList({ productPlan }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  console.log(productPlan);
-  
 
   const loadReviews = async () => {
     try {
@@ -30,7 +29,7 @@ export default function ReviewList({ productPlan }) {
 
   return (
     <div className="bg-white p-6 rounded-xl flex flex-col space-y-5">
-      {loading && <p className="text-gray-500 text-sm">Loading reviews...</p>}
+      {loading && <LoadingSpinner  message = "Loading All Reviews..." size="sm" variant="inline"/>}
 
       {!loading && reviews.length === 0 && (
         <p className="text-gray-500 text-sm">No reviews yet.</p>

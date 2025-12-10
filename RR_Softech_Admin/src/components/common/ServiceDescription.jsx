@@ -16,7 +16,7 @@ function ServiceDescription({ text }) {
       {/* Toggle Button */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-blue-600 font-medium hover:underline"
+        className="text-blue-600 font-medium hover:underline cursor-pointer"
       >
         {expanded ? "See Less" : "See More"}
       </button>
