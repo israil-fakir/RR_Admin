@@ -7,21 +7,13 @@ import { fetchEmployees } from "../../../api/UserDashboard/employee";
 import { fetchAvailableSlots } from "../../../api/UserDashboard/availableSlot";
 import CalendarComponent from "../../../components/common/CalendarComponent";
 
-/**
- * BookConsultancyModal
- * - Two selects (start & end) enforcing continuity (end must be a later slot).
- * - Resets start/end when employee or date changes.
- * - Builds ISO start_time and end_time payload for backend.
- */
 export default function BookConsultancyModal({ onClose, onSuccess }) {
   const [employeeList, setEmployeeList] = useState([]);
   const [employeeId, setEmployeeId] = useState("");
-
-  const [selectedDate, setSelectedDate] = useState(null); // Calendar should give Date
+  const [selectedDate, setSelectedDate] = useState(null); 
   const [availableTimes, setAvailableTimes] = useState([]);
   const [selectedStart, setSelectedStart] = useState(""); // "HH:mm"
   const [selectedEnd, setSelectedEnd] = useState(""); // "HH:mm"
-
   const [notes, setNotes] = useState("");
 
   const [loadingSlots, setLoadingSlots] = useState(false);

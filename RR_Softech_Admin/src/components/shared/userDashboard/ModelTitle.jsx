@@ -2,10 +2,10 @@ import { TrendingUp, X } from "lucide-react";
 
 export default function ModelTitle({ selectedService, onClose }) {
 
-  const planPriceStr = selectedService.plan_price.replace(/\$|\s*Plan\s*/gi, "").trim();
-  const planPrice = parseFloat(planPriceStr);
-  const total = (planPrice * 1.1).toFixed(2);
-  const ServiceIcon = selectedService.icon;
+const planPriceStr = selectedService.plan_price.replace(/\$|\s*Plan\s*/gi, "").trim();
+const planPrice = parseFloat(planPriceStr);
+const total = (planPrice * 1.03).toFixed(2);
+const ServiceIcon = selectedService.icon;
 
   return (
     <div className="p-6 bg-white shadow-sm">
