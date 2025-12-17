@@ -5,6 +5,7 @@ import {
 } from "../../../api/UserDashboard/payment";
 import { Loader2, BadgeCheck } from "lucide-react";
 import { toast } from "react-toastify";
+import LoadingSpinner from "../../common/LoadingSpinner";
 
 export default function VerifyingTransaction() {
   const [transactions, setTransactions] = useState([]);
@@ -28,9 +29,8 @@ export default function VerifyingTransaction() {
   }, []);
 
   async function handleToggleSuccess(id) {
-
     console.log(id);
-    
+
     setProcessingId(id);
 
     try {
@@ -59,9 +59,11 @@ export default function VerifyingTransaction() {
   return (
     <div className="p-6">
       {loading ? (
-        <div className="flex justify-center py-10">
-          <Loader2 className="animate-spin h-10 w-10 text-gray-500" />
-        </div>
+        <LoadingSpinner
+          variant="fullscreen"
+          size="lg"
+          message="Loading verifying transactions..."
+        />
       ) : transactions.length === 0 ? (
         <div className="text-center text-gray-500 py-8">
           No verifying transactions found.

@@ -169,12 +169,9 @@ export default function Feedback() {
 
                   {/* Actions */}
                   <div className="flex gap-2 mt-4">
-                    <button className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-100 transition">
-                      <Reply size={15} /> Reply
-                    </button>
                     <button
                       onClick={() => handleArchive(item.id)}
-                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-100 transition"
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-100 transition cursor-pointer"
                     >
                       <Archive size={15} /> Archive
                     </button>

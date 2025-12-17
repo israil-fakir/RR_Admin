@@ -7,6 +7,7 @@ import AppointmentModal from "../../employee/ConsultancyRequest/AppointmentModal
 import LoadingSpinner from "../../../components/common/LoadingSpinner";
 
 export default function ConsultancyRequestAdmin() {
+  motion
   const [appointments, setAppointments] = useState([]);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 

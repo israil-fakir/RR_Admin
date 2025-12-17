@@ -177,7 +177,7 @@ export default function Transactions() {
               currentItems.map((item) => (
                 <tr
                   key={item.id}
-                  className="border-b border-gray-200 text-sm hover:bg-gray-100 transition"
+                  className="border-b border-gray-200 text-sm hover:bg-gray-100 transition cursor-pointer"
                   onClick={() => openDetails(item)}
                 >
                   {/* Transaction ID */}
@@ -225,7 +225,7 @@ export default function Transactions() {
                         e.stopPropagation(); // prevent row navigation
                         generateTransactionPDF(item);
                       }}
-                      className="text-blue-600 underline hover:text-blue-800 text-sm"
+                      className="text-blue-600 underline hover:text-blue-800 text-sm cursor-pointer"
                     >
                       Download
                     </button>

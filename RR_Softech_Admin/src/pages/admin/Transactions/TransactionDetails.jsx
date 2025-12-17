@@ -16,6 +16,9 @@ export default function TransactionDetails() {
   const [loading, setLoading] = useState(!transaction);
   const [userLoading, setUserLoading] = useState(false);
 
+  console.log(transaction);
+  
+
   useEffect(() => {
     async function ensureTransaction() {
       if (transaction) return;

@@ -119,7 +119,7 @@ export default function Orders() {
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}
-            className={`md:px-4 px-3 py-2 rounded-xl text-sm font-medium transition-all ${activeFilter === filter
+            className={`md:px-4 px-3 py-2 rounded-xl cursor-pointer text-sm font-medium transition-all ${activeFilter === filter
                 ? "bg-gray-300 text-black shadow-sm"
                 : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-100"
               }`}
